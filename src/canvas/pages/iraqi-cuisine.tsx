@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import BreadcrumbNav from "@/components/layout/BreadcrumbNav";
 import ThemeBtn from "@/components/shared/ThemeBtn";
 import SmartImage from "@/components/shared/SmartImage";
+import { RESTAURANT } from "@/data/restaurant";
 
 const SPECIALTY_LINKS: Record<string, { href: string; label: string }> = {
   "Samoon": { href: "/specialties/bread/", label: "Read more about our samoon →" },
@@ -102,10 +103,10 @@ function IraqiCuisinePage() {
 
       <Anno id="intro">
         <section className="container-pad py-10 md:py-16 max-w-3xl">
-          <div className="eyebrow">From Baghdad to Richardson</div>
-          <h1 className="mb-6">Iraqi Cuisine — A Guide to the Iraqi Bakery &amp; Breakfast Tradition</h1>
+          <div className="eyebrow">From {RESTAURANT.originCity} to {RESTAURANT.address.city}</div>
+          <h1 className="mb-6">{RESTAURANT.servesCuisine} Cuisine — A Guide to the {RESTAURANT.servesCuisine} Bakery &amp; Breakfast Tradition</h1>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            Iraqi cuisine is its own world — distinct breads like samoon, a beloved morning tradition of kahi, qeimar and baqila, and a bakery heritage of baklava, kanafa and mabrouma stretching back over a century. The techniques, spice blends, and family recipes carry their own Baghdadi heritage. Here&apos;s a guide to what we bake fresh every day at Albaghdady.
+            {RESTAURANT.servesCuisine} cuisine is its own world — distinct breads like samoon, a beloved morning tradition of kahi, qeimar and baqila, and a bakery heritage of baklava, kanafa and mabrouma stretching back over a century. The techniques, spice blends, and family recipes carry their own {RESTAURANT.originCity}i heritage. Here&apos;s a guide to what we bake fresh every day at {RESTAURANT.brandShort}.
           </p>
         </section>
       </Anno>
@@ -125,7 +126,7 @@ function IraqiCuisinePage() {
                   <div className="card-img aspect-square rounded-2xl overflow-hidden">
                     <SmartImage
                       src={images[i % images.length]}
-                      alt={`${dish.name} — authentic Iraqi dish at Al-Baghdady, halal bakery & café in Richardson, TX`}
+                      alt={`${dish.name} — authentic ${RESTAURANT.servesCuisine} dish at ${RESTAURANT.brandShort}, ${RESTAURANT.dietary} bakery & café in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
                       sizes="(min-width: 768px) 33vw, 100vw"
                       className="w-full h-full"
                     />
@@ -154,15 +155,15 @@ function IraqiCuisinePage() {
           {/* DRAFT (2026-05-21) — closing topical content + internal links. Pending Hasham/client brand-voice review. */}
           <div className="max-w-3xl mt-20">
             <div className="eyebrow">Visit Us</div>
-            <h2 className="mb-5">Taste Authentic Iraqi Cuisine in Richardson, TX</h2>
+            <h2 className="mb-5">Taste Authentic {RESTAURANT.servesCuisine} Cuisine in {RESTAURANT.address.city}, {RESTAURANT.address.state}</h2>
             <p className="text-[var(--color-text-muted)] leading-relaxed">
-              Every dish in this guide is baked or cooked fresh at Al-Baghdady, a family-run halal Iraqi
-              bakery and breakfast café in Richardson serving the greater Dallas–Fort Worth area. Stop in for
+              Every dish in this guide is baked or cooked fresh at {RESTAURANT.brandShort}, a family-run {RESTAURANT.dietary} {RESTAURANT.servesCuisine}
+              bakery and breakfast café in {RESTAURANT.address.city} serving the greater {RESTAURANT.region} area. Stop in for
               a traditional{" "}
-              <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">Iraqi breakfast</Link> with hot{" "}
+              <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">{RESTAURANT.servesCuisine} breakfast</Link> with hot{" "}
               <Link href="/specialties/chai/" className="link-underline text-[var(--color-text)]">karak chai</Link>, take home a box of{" "}
               <Link href="/specialties/baklava/" className="link-underline text-[var(--color-text)]">baklava</Link> and{" "}
-              <Link href="/specialties/kunafa/" className="link-underline text-[var(--color-text)]">kunafa</Link>, or order a full Iraqi
+              <Link href="/specialties/kunafa/" className="link-underline text-[var(--color-text)]">kunafa</Link>, or order a full {RESTAURANT.servesCuisine}
               spread for your next event through our{" "}
               <Link href="/catering/" className="link-underline text-[var(--color-text)]">catering</Link> team. Come hungry — leave full.
             </p>

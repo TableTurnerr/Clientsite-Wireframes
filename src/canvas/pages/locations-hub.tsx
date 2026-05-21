@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import BreadcrumbNav from "@/components/layout/BreadcrumbNav";
 import ThemeBtn from "@/components/shared/ThemeBtn";
 import SmartImage from "@/components/shared/SmartImage";
+import { RESTAURANT } from "@/data/restaurant";
 
 // NEW (multi-location): hub listing physical branches. Sample = 3 branches.
 const LOCATIONS = [
@@ -26,9 +27,9 @@ function LocationsHubPage() {
       <Anno id="hero">
         <section className="container-pad py-10 md:py-16 max-w-3xl">
           <div className="eyebrow">Our Locations</div>
-          <h1 className="mb-6">Visit Us Across Dallas–Fort Worth</h1>
+          <h1 className="mb-6">Visit Us Across {RESTAURANT.region}</h1>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            Find your nearest Al-Baghdady bakery & café. Each location bakes fresh daily — pick the one closest to you for hours, directions and online ordering.
+            Find your nearest {RESTAURANT.brandShort} bakery & café. Each location bakes fresh daily — pick the one closest to you for hours, directions and online ordering.
           </p>
         </section>
       </Anno>
@@ -39,7 +40,7 @@ function LocationsHubPage() {
             {LOCATIONS.map((loc) => (
               <div key={loc.slug} className="card p-0 overflow-hidden">
                 <div className="card-img aspect-[16/10]">
-                  <SmartImage src="/Images/hero.webp" alt={`Al-Baghdady ${loc.city} map`} sizes="(min-width: 1024px) 33vw, 100vw" className="w-full h-full" />
+                  <SmartImage src="/Images/hero.webp" alt={`${RESTAURANT.brandShort} ${loc.city} map`} sizes="(min-width: 1024px) 33vw, 100vw" className="w-full h-full" />
                 </div>
                 <div className="p-6">
                   <h2 className="!text-xl !mb-3" style={{ fontFamily: "var(--font-display)", fontWeight: 500 }}>{loc.city}</h2>

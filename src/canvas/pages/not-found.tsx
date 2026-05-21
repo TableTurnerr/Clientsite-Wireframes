@@ -9,9 +9,9 @@ import ThemeBtn from "@/components/shared/ThemeBtn";
 import QRHover from "@/components/shared/QRHover";
 
 const QUICK_LINKS = [
-  { href: "/menu/", title: "The Menu", body: "Iraqi sweets, daily breakfast, fresh bakery and savory plates.", icon: UtensilsCrossed },
-  { href: "/our-story/", title: "Our Story", body: "From Baghdad in 1919 to Richardson — four generations of baking.", icon: BookOpen },
-  { href: "/catering/", title: "Catering", body: "Full-service Iraqi catering for events large and small.", icon: Soup },
+  { href: "/menu/", title: "The Menu", body: `${RESTAURANT.servesCuisine} sweets, daily breakfast, fresh bakery and savory plates.`, icon: UtensilsCrossed },
+  { href: "/our-story/", title: "Our Story", body: `From ${RESTAURANT.originCity} in ${RESTAURANT.familyRecipeSince} to ${RESTAURANT.address.city} — four generations of baking.`, icon: BookOpen },
+  { href: "/catering/", title: "Catering", body: `Full-service ${RESTAURANT.servesCuisine} catering for events large and small.`, icon: Soup },
 ];
 
 function NotFoundPage() {

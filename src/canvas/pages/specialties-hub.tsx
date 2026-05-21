@@ -26,7 +26,7 @@ function SpecialtiesIndexPage() {
       <Anno id="intro">
         <section className="container-pad py-12 md:py-20 max-w-3xl">
           <div className="eyebrow">Our Craft</div>
-          <h1 className="mb-6">Our Iraqi Bakery &amp; Breakfast Specialties</h1>
+          <h1 className="mb-6">Our {RESTAURANT.servesCuisine} Bakery &amp; Breakfast Specialties</h1>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
             Hand-baked daily — the dishes our family has made since {RESTAURANT.familyRecipeSince}.
           </p>
@@ -46,7 +46,7 @@ function SpecialtiesIndexPage() {
                   <div className="card-img aspect-[4/3]">
                     <SmartImage
                       src={s.image}
-                      alt={`${s.name} — authentic Iraqi specialty at ${RESTAURANT.name}, halal bakery & café in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
+                      alt={`${s.name} — authentic ${RESTAURANT.servesCuisine} specialty at ${RESTAURANT.name}, ${RESTAURANT.dietary} bakery & café in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       className="w-full h-full"
                     />

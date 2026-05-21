@@ -19,10 +19,9 @@ function fmtTime(t: string) {
   return m ? `${hour}:${String(m).padStart(2, "0")} ${period}` : `${hour} ${period}`;
 }
 
-const BREAKFAST_RANGE = `${fmtTime(RESTAURANT.breakfastHours.open)} – ${fmtTime(RESTAURANT.breakfastHours.close)}`;
-
 // EXACT composition of src/app/menu/page.tsx — real components, real CSS.
 function MenuPage() {
+  const BREAKFAST_RANGE = `${fmtTime(RESTAURANT.breakfastHours.open)} – ${fmtTime(RESTAURANT.breakfastHours.close)}`;
   return (
     <>
       <Anno id="hdr"><Header /></Anno>
@@ -39,9 +38,9 @@ function MenuPage() {
         <section className="container-pad py-10 md:py-16">
           <div className="max-w-3xl">
             <div className="eyebrow">Our Menu</div>
-            <h1 className="mb-5">Authentic Iraqi Cuisine & Bakery</h1>
+            <h1 className="mb-5">Authentic {RESTAURANT.servesCuisine} Cuisine & Bakery</h1>
             <p className="text-lg text-[var(--color-text-muted)]">
-              Every dish is made with traditional Iraqi spices and family recipes. Halal across the
+              Every dish is made with traditional {RESTAURANT.servesCuisine} spices and family recipes. {RESTAURANT.dietary} across the
               entire menu, with fresh samoon bread baked throughout the day in our in-house bakery.
             </p>
             <div className="flex flex-wrap gap-3 mt-6">
@@ -60,7 +59,7 @@ function MenuPage() {
                   Breakfast Service · {BREAKFAST_RANGE}
                 </div>
                 <div className="text-sm text-[var(--color-text)] mt-1 font-medium">
-                  {RESTAURANT.breakfastHours.note}
+                  {`${RESTAURANT.servesCuisine} breakfast served every day except Monday`}
                 </div>
               </div>
             </div>
@@ -94,19 +93,19 @@ function MenuPage() {
         <section className="container-pad section-pad border-t border-[var(--color-border)]">
           <div className="max-w-3xl">
             <div className="eyebrow">More About Our Kitchen</div>
-            <h2 className="mb-5">Authentic Iraqi Bakery &amp; Breakfast in Richardson, TX</h2>
+            <h2 className="mb-5">Authentic {RESTAURANT.servesCuisine} Bakery &amp; Breakfast in {RESTAURANT.address.city}, {RESTAURANT.address.state}</h2>
             <div className="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
               <p>
-                Al-Baghdady is a family-run halal Iraqi bakery and breakfast café in Richardson, serving
-                the Dallas–Fort Worth area with recipes carried from Baghdad. Every morning our bakers fire
+                {RESTAURANT.brandShort} is a family-run {RESTAURANT.dietary.toLowerCase()} {RESTAURANT.servesCuisine} bakery and breakfast café in {RESTAURANT.address.city}, serving
+                the {RESTAURANT.region} area with recipes carried from {RESTAURANT.originCity}. Every morning our bakers fire
                 fresh{" "}
                 <Link href="/specialties/bread/" className="link-underline text-[var(--color-text)]">samoon and tandoor bread</Link>, hand-fold{" "}
                 <Link href="/specialties/fatayer/" className="link-underline text-[var(--color-text)]">fatayer</Link>, and stretch{" "}
                 <Link href="/specialties/manakish/" className="link-underline text-[var(--color-text)]">manakish</Link> — the savory
-                backbone of a traditional Iraqi breakfast.
+                backbone of a traditional {RESTAURANT.servesCuisine} breakfast.
               </p>
               <p>
-                Our in-house bakery is best known for Iraqi sweets: paper-thin{" "}
+                Our in-house bakery is best known for {RESTAURANT.servesCuisine} sweets: paper-thin{" "}
                 <Link href="/specialties/baklava/" className="link-underline text-[var(--color-text)]">baklava</Link> layered with
                 pistachios and walnuts, hot{" "}
                 <Link href="/specialties/kunafa/" className="link-underline text-[var(--color-text)]">kunafa</Link> with melted cheese
@@ -118,11 +117,11 @@ function MenuPage() {
               </p>
               <p>
                 Come in for a sit-down{" "}
-                <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">Iraqi breakfast</Link> — Kahi
+                <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">{RESTAURANT.servesCuisine} breakfast</Link> — Kahi
                 &amp; Qeimar, Baqila, Kubba and the signature Albaghdady Plate — or order baklava and kunafa
                 trays for pickup, delivery and{" "}
-                <Link href="/catering/" className="link-underline text-[var(--color-text)]">catering</Link> across Richardson, Plano,
-                Garland and the wider DFW area. Every item on our menu is 100% halal and Zabihah-verified.
+                <Link href="/catering/" className="link-underline text-[var(--color-text)]">catering</Link> across {RESTAURANT.address.city}, Plano,
+                Garland and the wider {RESTAURANT.regionShort} area. Every item on our menu is 100% {RESTAURANT.dietary.toLowerCase()} and Zabihah-verified.
               </p>
             </div>
           </div>

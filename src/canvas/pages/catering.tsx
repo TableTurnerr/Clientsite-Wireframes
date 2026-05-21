@@ -6,36 +6,37 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BreadcrumbNav from "@/components/layout/BreadcrumbNav";
 import CateringForm from "@/components/catering/CateringForm";
-
-const SERVICES = [
-  "Eid celebrations — assorted baklava and kunafa trays, full sweets spreads",
-  "Weddings & engagements — custom dessert tables, ladyfingers, burma, mabrouma",
-  "Ramadan iftars — full Iraqi spread ready at sunset, samoon, fatayer, manakish",
-  "Corporate lunches — breakfast catering, dessert boxes, halal-friendly options",
-  "Family gatherings — baklava trays, kunafa platters, fatayer boxes (cheese, spinach, meat)",
-  "Delivery across Richardson, Plano, Garland, Addison, Carrollton, Frisco, and greater DFW",
-];
-
-const STEPS = [
-  {
-    n: "1",
-    title: "Submit your inquiry",
-    body: "Fill out the form below or call us. Tell us your date, guest count and event type.",
-  },
-  {
-    n: "2",
-    title: "We design your menu",
-    body: "Our team builds a halal Iraqi spread that fits your event, dietary needs and budget.",
-  },
-  {
-    n: "3",
-    title: "We deliver and set up",
-    body: "Drop-off or full-service catering with warming trays, serving ware and our team on site.",
-  },
-];
+import { RESTAURANT } from "@/data/restaurant";
 
 // EXACT composition of src/app/catering/page.tsx — real components, real CSS.
 function CateringPage() {
+  // Computed in render so live config edits propagate.
+  const SERVICES = [
+    "Eid celebrations — assorted baklava and kunafa trays, full sweets spreads",
+    "Weddings & engagements — custom dessert tables, ladyfingers, burma, mabrouma",
+    `Ramadan iftars — full ${RESTAURANT.servesCuisine} spread ready at sunset, samoon, fatayer, manakish`,
+    `Corporate lunches — breakfast catering, dessert boxes, ${RESTAURANT.dietary.toLowerCase()}-friendly options`,
+    "Family gatherings — baklava trays, kunafa platters, fatayer boxes (cheese, spinach, meat)",
+    `Delivery across ${RESTAURANT.cateringAreas}`,
+  ];
+
+  const STEPS = [
+    {
+      n: "1",
+      title: "Submit your inquiry",
+      body: "Fill out the form below or call us. Tell us your date, guest count and event type.",
+    },
+    {
+      n: "2",
+      title: "We design your menu",
+      body: `Our team builds a ${RESTAURANT.dietary.toLowerCase()} ${RESTAURANT.servesCuisine} spread that fits your event, dietary needs and budget.`,
+    },
+    {
+      n: "3",
+      title: "We deliver and set up",
+      body: "Drop-off or full-service catering with warming trays, serving ware and our team on site.",
+    },
+  ];
   return (
     <>
       <Anno id="hdr"><Header /></Anno>
@@ -51,12 +52,12 @@ function CateringPage() {
       <Anno id="hero">
         <section className="container-pad py-10 md:py-16 max-w-3xl">
           <div className="eyebrow">Catering</div>
-          <h1 className="mb-6">Iraqi Dessert Catering in Dallas — Authentic Kunafa, Baklava Trays and More</h1>
+          <h1 className="mb-6">{RESTAURANT.servesCuisine} Dessert Catering in {RESTAURANT.region} — Authentic Kunafa, Baklava Trays and More</h1>
           <p className="text-lg text-[var(--color-text-muted)] mb-5 leading-relaxed">
-            Sweets, savories, and trays that make the event. For over a decade, Albaghdady has catered Middle Eastern desserts and Iraqi savories all across Richardson, Texas — Eid celebrations, weddings, engagement parties, Ramadan iftars, corporate lunches, and family gatherings of every size. If it&apos;s worth celebrating, it&apos;s worth doing right.
+            Sweets, savories, and trays that make the event. For over a decade, {RESTAURANT.brandShort} has catered Middle Eastern desserts and {RESTAURANT.servesCuisine} savories all across {RESTAURANT.address.city}, {RESTAURANT.stateFull} — Eid celebrations, weddings, engagement parties, Ramadan iftars, corporate lunches, and family gatherings of every size. If it&apos;s worth celebrating, it&apos;s worth doing right.
           </p>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            Our catering menu spans the full range of what we bake fresh in-house: assorted baklava trays, kunafa platters, ladyfingers, burma, fatayer (cheese, spinach, meat), manakish, samoon, and full Iraqi sweets spreads with mabrouma, awama, and the rest of our family menu. Everything is made the day of your event. Nothing is frozen, nothing is pre-packed, nothing tastes like it sat on a shelf.
+            Our catering menu spans the full range of what we bake fresh in-house: assorted baklava trays, kunafa platters, ladyfingers, burma, fatayer (cheese, spinach, meat), manakish, samoon, and full {RESTAURANT.servesCuisine} sweets spreads with mabrouma, awama, and the rest of our family menu. Everything is made the day of your event. Nothing is frozen, nothing is pre-packed, nothing tastes like it sat on a shelf.
           </p>
         </section>
       </Anno>
@@ -107,13 +108,13 @@ function CateringPage() {
       {/* DRAFT (2026-05-21) — topical SEO content + internal links for the catering page. Pending Hasham/client brand-voice review. */}
       <Anno id="seo">
         <section className="container-pad pb-16 max-w-3xl">
-          <div className="eyebrow">Catering Across DFW</div>
-          <h2 className="mb-5">Halal Iraqi &amp; Middle Eastern Catering for Every Occasion</h2>
+          <div className="eyebrow">Catering Across {RESTAURANT.regionShort}</div>
+          <h2 className="mb-5">{RESTAURANT.dietary} {RESTAURANT.servesCuisine} &amp; Middle Eastern Catering for Every Occasion</h2>
           <div className="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
             <p>
-              From intimate family gatherings to weddings of several hundred guests, Al-Baghdady caters
-              authentic Iraqi and Middle Eastern food across Richardson, Plano, Garland, Allen, Frisco,
-              Carrollton and the wider Dallas–Fort Worth area. Our most-requested trays are assorted{" "}
+              From intimate family gatherings to weddings of several hundred guests, {RESTAURANT.brandShort} caters
+              authentic {RESTAURANT.servesCuisine} and Middle Eastern food across {RESTAURANT.address.city}, Plano, Garland, Allen, Frisco,
+              Carrollton and the wider {RESTAURANT.region} area. Our most-requested trays are assorted{" "}
               <Link href="/specialties/baklava/" className="link-underline text-[var(--color-text)]">baklava</Link>, hot{" "}
               <Link href="/specialties/kunafa/" className="link-underline text-[var(--color-text)]">kunafa</Link>,{" "}
               <Link href="/specialties/burma/" className="link-underline text-[var(--color-text)]">burma</Link> and{" "}
@@ -127,7 +128,7 @@ function CateringPage() {
               <Link href="/specialties/bread/" className="link-underline text-[var(--color-text)]">samoon</Link>, and urns of cardamom{" "}
               <Link href="/specialties/chai/" className="link-underline text-[var(--color-text)]">karak chai</Link>. Browse the full{" "}
               <Link href="/menu/" className="link-underline text-[var(--color-text)]">menu</Link> for ideas, then send your date and
-              guest count above — everything is baked the day of your event and is 100% halal and Zabihah-verified.
+              guest count above — everything is baked the day of your event and is 100% {RESTAURANT.dietary.toLowerCase()} and Zabihah-verified.
             </p>
           </div>
         </section>

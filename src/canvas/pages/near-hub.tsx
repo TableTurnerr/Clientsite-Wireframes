@@ -3,6 +3,7 @@ import { Anno } from "@/wireframe/Anno";
 import Link from "next/link";
 import { MapPin, Clock } from "lucide-react";
 import { NEIGHBORHOODS } from "@/data/neighborhoods";
+import { RESTAURANT } from "@/data/restaurant";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BreadcrumbNav from "@/components/layout/BreadcrumbNav";
@@ -23,11 +24,11 @@ function ServiceAreasIndex() {
 
       <Anno id="intro">
         <section className="container-pad py-10 md:py-16 max-w-3xl">
-          <div className="eyebrow">Across the DFW Metroplex</div>
-          <h1 className="mb-6">Iraqi Food, Halal Bakery &amp; Catering — Serving DFW</h1>
+          <div className="eyebrow">Across the {RESTAURANT.regionShort} Metroplex</div>
+          <h1 className="mb-6">{RESTAURANT.servesCuisine} Food, {RESTAURANT.dietary} Bakery &amp; Catering — Serving {RESTAURANT.regionShort}</h1>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            From our home in Richardson, we serve authentic Iraqi food, fresh-baked bakery items,
-            and full catering across the Dallas-Fort Worth metroplex. Click your city for the
+            From our home in {RESTAURANT.address.city}, we serve authentic {RESTAURANT.servesCuisine} food, fresh-baked bakery items,
+            and full catering across the {RESTAURANT.region} metroplex. Click your city for the
             neighborhood&apos;s dedicated page — drive times, popular dishes, and delivery info.
           </p>
           <div className="flex flex-wrap gap-3 mt-6">

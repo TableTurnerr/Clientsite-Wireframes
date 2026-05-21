@@ -29,10 +29,10 @@ function LocationSinglePage() {
         <section className="container-pad py-12 md:py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="eyebrow">Now Open · {LOC.city}, TX</div>
-              <h1 className="mb-6">Al-Baghdady — {LOC.city}</h1>
+              <div className="eyebrow">Now Open · {LOC.city}, {RESTAURANT.address.state}</div>
+              <h1 className="mb-6">{RESTAURANT.brandShort} — {LOC.city}</h1>
               <p className="text-lg text-[var(--color-text-muted)] mb-6">
-                Our {LOC.city} bakery & café serves the same authentic Iraqi sweets, fresh samoon and traditional breakfast — baked fresh on site every day.
+                Our {LOC.city} bakery & café serves the same authentic {RESTAURANT.servesCuisine} sweets, fresh samoon and traditional breakfast — baked fresh on site every day.
               </p>
               <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2 text-sm"><Star size={18} className="fill-[var(--color-gold)] text-[var(--color-gold)]" /><span className="font-medium">{RESTAURANT.ratingValue} ({RESTAURANT.reviewCount.toLocaleString()} reviews)</span></div>
@@ -42,7 +42,7 @@ function LocationSinglePage() {
                 <QRHover value={RESTAURANT.orderOnline}><ThemeBtn href={RESTAURANT.orderOnline} external variant="secondary">Order Delivery</ThemeBtn></QRHover>
               </div>
             </div>
-            <SmartImage src="/Images/hero.webp" alt={`Al-Baghdady ${LOC.city}`} priority sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[4/5] rounded-[var(--radius-section)] shadow-[0_30px_80px_-30px_rgba(26,20,16,0.35)]" />
+            <SmartImage src="/Images/hero.webp" alt={`${RESTAURANT.brandShort} ${LOC.city}`} priority sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[4/5] rounded-[var(--radius-section)] shadow-[0_30px_80px_-30px_rgba(26,20,16,0.35)]" />
           </div>
         </section>
       </Anno>

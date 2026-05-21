@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import BreadcrumbNav from "@/components/layout/BreadcrumbNav";
 import ThemeBtn from "@/components/shared/ThemeBtn";
 import SmartImage from "@/components/shared/SmartImage";
+import { RESTAURANT } from "@/data/restaurant";
 
 function OurStoryPage() {
   return (
@@ -22,43 +23,43 @@ function OurStoryPage() {
       <Anno id="article">
         <section className="container-pad py-12 md:py-20 max-w-3xl">
           <div className="eyebrow">Our Story</div>
-          <h1 className="mb-8">The 100-Year Story of Dallas&apos;s Best Iraqi Bakery and Breakfast Café</h1>
+          <h1 className="mb-8">The 100-Year Story of {RESTAURANT.region}&apos;s Best {RESTAURANT.servesCuisine} Bakery and Breakfast Café</h1>
 
           <SmartImage
             src="/Images/hero.webp"
-            alt="The Al-Baghdady family kitchen — four generations of Iraqi bakers behind the baklava, kunafa and samoon served in Richardson, TX"
+            alt={`The ${RESTAURANT.brandShort} family kitchen — four generations of ${RESTAURANT.servesCuisine} bakers behind the baklava, kunafa and samoon served in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
             priority
             sizes="(min-width: 768px) 768px, 100vw"
             className="aspect-[16/9] rounded-[var(--radius-section)] mb-12 shadow-[0_30px_80px_-30px_rgba(26,20,16,0.35)]"
           />
 
           <div className="prose-content space-y-6 text-[var(--color-text)] text-lg leading-relaxed">
-            <h2 className="!mt-0 !mb-4">It All Started in Baghdad, 1919</h2>
+            <h2 className="!mt-0 !mb-4">It All Started in {RESTAURANT.originCity}, {RESTAURANT.familyRecipeSince}</h2>
             <p>
-              Our story begins not in Texas, but in Baghdad — in 1919 — where our family first opened a bakery. <em>Albaghdady</em> — البغدادي — simply means <em>the one from Baghdad</em>, and for over a century, that name has meant the same thing wherever we&apos;ve stood: hand-made breads, Iraqi sweets, and delicious Iraqi dishes.
+              Our story begins not in {RESTAURANT.stateFull}, but in {RESTAURANT.originCity} — in {RESTAURANT.familyRecipeSince} — where our family first opened a bakery. <em>{RESTAURANT.brandShort}</em> — البغدادي — simply means <em>the one from {RESTAURANT.originCity}</em>, and for over a century, that name has meant the same thing wherever we&apos;ve stood: hand-made breads, {RESTAURANT.servesCuisine} sweets, and delicious {RESTAURANT.servesCuisine} dishes.
             </p>
 
-            <h2 className="!mt-12 !mb-4">Authentic Traditional Iraqi Sweets</h2>
+            <h2 className="!mt-12 !mb-4">Authentic Traditional {RESTAURANT.servesCuisine} Sweets</h2>
             <p>
-              The recipes have passed from one generation to the next — same techniques, same standards, same insistence that bread is sacred. The breads, the baklava, the ladyfingers stuffed with cream — these aren&apos;t recipes we found. They&apos;ve been in our family since 1919, kept alive through war, migration, and the patience of teaching the next pair of hands.
+              The recipes have passed from one generation to the next — same techniques, same standards, same insistence that bread is sacred. The breads, the baklava, the ladyfingers stuffed with cream — these aren&apos;t recipes we found. They&apos;ve been in our family since {RESTAURANT.familyRecipeSince}, kept alive through war, migration, and the patience of teaching the next pair of hands.
             </p>
 
-            <h2 className="!mt-12 !mb-4">Representing Iraqi Heritage and Family Recipes in Texas</h2>
+            <h2 className="!mt-12 !mb-4">Representing {RESTAURANT.servesCuisine} Heritage and Family Recipes in {RESTAURANT.stateFull}</h2>
             <p>
               Our father and master baker Salah Hassan, grew up learning about our traditional recipes and has been perfecting his craft for 50 years, following in the footsteps of his father. As D Magazine noted, he &lsquo;quietly turns out his wares&rsquo; with a skill that only comes from a lifetime of tradition. When you visit, you aren&apos;t just getting bread; you&apos;re getting a century of expertise from a true professional.
             </p>
             <p>
-              In 2012, he brought the family trade to Texas, opening a small storefront on Greenville Avenue in Richardson — two parking spots and a counter — and began to bake the way our family has always baked.
+              In {RESTAURANT.founded}, he brought the family trade to {RESTAURANT.stateFull}, opening a small storefront on Greenville Avenue in {RESTAURANT.address.city} — two parking spots and a counter — and began to bake the way our family has always baked.
             </p>
 
             <h2 className="!mt-12 !mb-4">ضيافة — The Reason We Bake</h2>
             <p>
-              For our father, this was never just about selling bread. It was about <em>ḍiyāfa</em> — Iraqi hospitality. The belief that no one should leave your table hungry, that bread is sacred, that guests are a gift. He wanted his customers in Texas to taste what he tasted growing up in Baghdad — the warmth of a kitchen where everything is made by hand.
+              For our father, this was never just about selling bread. It was about <em>ḍiyāfa</em> — {RESTAURANT.servesCuisine} hospitality. The belief that no one should leave your table hungry, that bread is sacred, that guests are a gift. He wanted his customers in {RESTAURANT.stateFull} to taste what he tasted growing up in {RESTAURANT.originCity} — the warmth of a kitchen where everything is made by hand.
             </p>
 
-            <h2 className="!mt-12 !mb-4">Taste of Iraq in the Heart of Dallas, Texas</h2>
+            <h2 className="!mt-12 !mb-4">Taste of Iraq in the Heart of {RESTAURANT.region}, {RESTAURANT.stateFull}</h2>
             <p>
-              For over a decade now, our small breakfast place beside the barber shop has been a quiet landmark — a place loyal customers drive across Greenville Ave for, and where new neighbors discover their first bite of real Iraqi baking.
+              For over a decade now, our small breakfast place beside the barber shop has been a quiet landmark — a place loyal customers drive across Greenville Ave for, and where new neighbors discover their first bite of real {RESTAURANT.servesCuisine} baking.
             </p>
 
             <h2 className="!mt-12 !mb-4">Come See Us in the Morning, When the Bread is Hottest</h2>

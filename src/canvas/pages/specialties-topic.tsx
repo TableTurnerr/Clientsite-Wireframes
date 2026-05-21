@@ -75,7 +75,7 @@ function SpecialtyPage() {
             {specialty.image && (
               <SmartImage
                 src={specialty.image}
-                alt={`${specialty.heroHeadline} — ${specialty.name} at ${RESTAURANT.name}, halal Iraqi bakery in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
+                alt={`${specialty.heroHeadline} — ${specialty.name} at ${RESTAURANT.name}, ${RESTAURANT.dietary} ${RESTAURANT.servesCuisine} bakery in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
                 priority
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="aspect-[4/5] rounded-[var(--radius-section)] shadow-[0_30px_80px_-30px_rgba(26,20,16,0.35)]"

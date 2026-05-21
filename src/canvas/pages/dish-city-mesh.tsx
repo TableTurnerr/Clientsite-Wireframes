@@ -16,17 +16,18 @@ import { MENU } from "@/data/menu";
 // PLANNED mesh template: /[dish]-in-[city]/. Sample = Baklava in Plano.
 const DISH = "Baklava";
 const CITY = "Plano";
-const RELATED = ["Mixed Baklava", "Pistachio Baklava", "Walnut Baklava"]
-  .map((name) => {
-    for (const c of MENU) {
-      const item = c.items.find((i) => i.name === name);
-      if (item) return { item, category: c };
-    }
-    return null;
-  })
-  .filter((x): x is NonNullable<typeof x> => Boolean(x));
 
 function DishCityMeshPage() {
+  // Computed in render so live config edits to MENU propagate here.
+  const RELATED = ["Mixed Baklava", "Pistachio Baklava", "Walnut Baklava"]
+    .map((name) => {
+      for (const c of MENU) {
+        const item = c.items.find((i) => i.name === name);
+        if (item) return { item, category: c };
+      }
+      return null;
+    })
+    .filter((x): x is NonNullable<typeof x> => Boolean(x));
   return (
     <>
       <Anno id="hdr"><Header /></Anno>
@@ -38,10 +39,10 @@ function DishCityMeshPage() {
         <section className="container-pad py-12 md:py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="eyebrow">{DISH} · {CITY}, TX</div>
-              <h1 className="mb-6">{DISH} in {CITY}, TX</h1>
+              <div className="eyebrow">{DISH} · {CITY}, {RESTAURANT.address.state}</div>
+              <h1 className="mb-6">{DISH} in {CITY}, {RESTAURANT.address.state}</h1>
               <p className="text-lg text-[var(--color-text-muted)] mb-6">
-                Fresh {DISH.toLowerCase()} delivered across {CITY} from our Richardson bakery — paper-thin phyllo, fresh pistachios and our family&apos;s honey syrup, baked daily.
+                Fresh {DISH.toLowerCase()} delivered across {CITY} from our {RESTAURANT.address.city} bakery — paper-thin phyllo, fresh pistachios and our family&apos;s honey syrup, baked daily.
               </p>
               <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2 text-sm"><MapPin size={18} className="text-[var(--color-primary)]" /><span className="font-medium">12 minutes from {CITY}</span></div>
@@ -62,7 +63,7 @@ function DishCityMeshPage() {
           <div className="container-pad max-w-3xl">
             <h2 className="mb-6">Authentic {DISH} for {CITY} Diners</h2>
             <p className="text-lg text-[var(--color-text-muted)] mb-6">
-              {CITY} residents drive to Al-Baghdady for baklava they can&apos;t find closer — made the way our family has baked it since 1919. Order online for same-day pickup or delivery across {CITY}.
+              {CITY} residents drive to {RESTAURANT.brandShort} for baklava they can&apos;t find closer — made the way our family has baked it since {RESTAURANT.familyRecipeSince}. Order online for same-day pickup or delivery across {CITY}.
             </p>
           </div>
         </section>
