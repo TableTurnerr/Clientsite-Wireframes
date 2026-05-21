@@ -7,18 +7,19 @@ import ThemeBtn from "../shared/ThemeBtn";
 import QRHover from "../shared/QRHover";
 import { RESTAURANT } from "@/data/restaurant";
 
-const NAV_LINKS = [
-  { href: "/menu/", label: "Menu" },
-  { href: "/specialties/", label: "Specialties" },
-  { href: "/our-story/", label: "Our Story" },
-  { href: "/iraqi-cuisine/", label: "Iraqi Cuisine" },
-  { href: "/bakery/", label: "Bakery" },
-  { href: "/catering/", label: "Catering" },
-];
-
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Computed in render so live config edits to the cuisine propagate.
+  const NAV_LINKS = [
+    { href: "/menu/", label: "Menu" },
+    { href: "/specialties/", label: "Specialties" },
+    { href: "/our-story/", label: "Our Story" },
+    { href: "/iraqi-cuisine/", label: `${RESTAURANT.servesCuisine} Cuisine` },
+    { href: "/bakery/", label: "Bakery" },
+    { href: "/catering/", label: "Catering" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -34,14 +35,14 @@ export default function Header() {
       }`}
     >
       <div className="container-pad flex items-center justify-between h-[72px]">
-        <Link href="/" className="flex items-center gap-3 group" aria-label="Al-Baghdady Restaurant home">
-          <div className="w-11 h-11 rounded-full overflow-hidden ring-1 ring-[var(--color-border)] transition-transform duration-300 group-hover:scale-105 shrink-0 wireframe-img" aria-label="Al-Baghdady Restaurant logo" />
+        <Link href="/" className="flex items-center gap-3 group" aria-label={`${RESTAURANT.brandShort} Restaurant home`}>
+          <div className="w-11 h-11 rounded-full overflow-hidden ring-1 ring-[var(--color-border)] transition-transform duration-300 group-hover:scale-105 shrink-0 wireframe-img" aria-label={`${RESTAURANT.brandShort} Restaurant logo`} />
           <div className="leading-tight">
             <div className="font-semibold text-[1.05rem] tracking-tight">
-              Al-Baghdady
+              {RESTAURANT.brandShort}
             </div>
             <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-[0.15em]">
-              Iraqi Restaurant & Bakery
+              {RESTAURANT.servesCuisine} Restaurant &amp; Bakery
             </div>
           </div>
         </Link>

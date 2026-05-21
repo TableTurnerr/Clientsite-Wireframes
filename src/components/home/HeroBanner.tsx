@@ -4,6 +4,7 @@ import SmartImage from "../shared/SmartImage";
 import QRHover from "../shared/QRHover";
 import HeroStatusBadge from "./HeroStatusBadge";
 import { RESTAURANT } from "@/data/restaurant";
+import { COPY } from "@/data/copy";
 
 function fmtTime(t: string) {
   const [h, m] = t.split(":").map(Number);
@@ -12,26 +13,25 @@ function fmtTime(t: string) {
   return m ? `${hour}:${String(m).padStart(2, "0")} ${period}` : `${hour} ${period}`;
 }
 
-const BREAKFAST_RANGE = `${fmtTime(RESTAURANT.breakfastHours.open)} – ${fmtTime(RESTAURANT.breakfastHours.close)}`;
-
 export default function HeroBanner() {
+  const BREAKFAST_RANGE = `${fmtTime(RESTAURANT.breakfastHours.open)} – ${fmtTime(RESTAURANT.breakfastHours.close)}`;
   return (
     <section className="relative bg-white">
       <div className="container-pad relative grid gap-12 lg:grid-cols-2 lg:gap-20 items-center pt-12 pb-16 md:pt-24 md:pb-28">
         <div className="animate-fade-up">
-          <div className="eyebrow">Iraqi Bakery &amp; Café · Halal · Family-Owned Since 2012</div>
+          <div className="eyebrow">{RESTAURANT.servesCuisine} Bakery &amp; Café · {RESTAURANT.dietary} · Family-Owned Since {RESTAURANT.founded}</div>
           <h1 className="mb-7">
-            The most{" "}
+            {COPY.homeHeroLead}{" "}
             <em
               className="text-[var(--color-primary)]"
               style={{ fontFamily: "var(--font-accent)", fontStyle: "italic", fontWeight: 400, letterSpacing: "-0.02em" }}
             >
-              Authentic
+              {COPY.homeHeroAccent}
             </em>{" "}
-            Baklava<br />in All of Richardson, Texas
+            {COPY.homeHeroDish}<br />in {RESTAURANT.address.city}, {RESTAURANT.stateFull}
           </h1>
           <p className="text-lg text-[var(--color-text-muted)] max-w-xl mb-10 leading-relaxed">
-            Located in the heart of Richardson, TX, Albaghdady has been a family-run Iraqi bakery and cafe since 2012 — serving authentic Iraqi sweets, like our authentic baklava, our family has perfected since 1919.
+            Located in the heart of {RESTAURANT.address.city}, {RESTAURANT.address.state}, {RESTAURANT.brandShort} has been a family-run {RESTAURANT.servesCuisine} bakery and café since {RESTAURANT.founded} — serving authentic {RESTAURANT.servesCuisine} sweets our family has perfected since {RESTAURANT.familyRecipeSince}.
           </p>
 
           <div className="flex flex-wrap gap-3 mb-10">
@@ -60,13 +60,13 @@ export default function HeroBanner() {
               </span>
             </div>
             <div className="font-medium text-[var(--color-text-muted)]">
-              ✓ Zabihah Verified Halal
+              ✓ {COPY.homeHeroTrust}
             </div>
           </div>
 
           <div className="mt-6 inline-flex items-center gap-2 text-sm">
             <Sunrise size={16} className="text-[var(--color-gold-dark)]" aria-hidden="true" />
-            <span className="font-semibold text-[var(--color-text)]">{RESTAURANT.breakfastHours.note}</span>
+            <span className="font-semibold text-[var(--color-text)]">{`${RESTAURANT.servesCuisine} breakfast served every day except Monday`}</span>
             <span className="text-[var(--color-text-muted)]">· {BREAKFAST_RANGE}</span>
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function HeroBanner() {
         <div className="relative animate-fade-in">
           <SmartImage
             src="/Images/hero.webp"
-            alt="Fresh pistachio baklava on a plate at Al-Baghdady, an Iraqi bakery in Richardson, TX"
+            alt={`${COPY.homeHeroDish} at ${RESTAURANT.brandShort}, a ${RESTAURANT.servesCuisine} bakery in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
             priority
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="aspect-[4/5] rounded-[28px] shadow-[0_30px_80px_-30px_rgba(26,20,16,0.35)]"
@@ -89,7 +89,7 @@ export default function HeroBanner() {
                 className="text-sm mt-1 italic"
                 style={{ fontFamily: "var(--font-accent)", fontWeight: 500 }}
               >
-                1919
+                {RESTAURANT.familyRecipeSince}
               </div>
             </div>
           </div>

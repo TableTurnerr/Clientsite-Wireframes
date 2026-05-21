@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import SmartImage from "../shared/SmartImage";
+import { RESTAURANT } from "@/data/restaurant";
 
 type GalleryImage = {
   src: string;
@@ -18,7 +19,7 @@ const IMAGES: GalleryImage[] = [
   },
   {
     src: "/Images/gallery/sweets-platter-lamps.webp",
-    alt: "A large oval platter of mixed Iraqi baklava and bird's nest pastries in the bakery window",
+    alt: `A large oval platter of mixed ${RESTAURANT.servesCuisine} baklava and bird's nest pastries in the bakery window`,
     caption: "Assorted baklava platter, fresh from the oven",
   },
   {
@@ -33,17 +34,17 @@ const IMAGES: GalleryImage[] = [
   },
   {
     src: "/Images/gallery/baklava-tiered-tray.webp",
-    alt: "A three-tier copper stand of mixed Iraqi sweets served with a small pot of qahwa",
+    alt: `A three-tier copper stand of mixed ${RESTAURANT.servesCuisine} sweets served with a small pot of qahwa`,
     caption: "Tiered trays built for the table — perfect for catering",
   },
   {
     src: "/Images/gallery/baklava-boxed.webp",
-    alt: "A boxed Al-Baghdady bakery selection next to a plate of fresh pistachio baklava",
+    alt: `A boxed ${RESTAURANT.brandShort} bakery selection next to a plate of fresh pistachio baklava`,
     caption: "Boxed and ready to take home, in any size",
   },
   {
     src: "/Images/gallery/dessert-tray-box.webp",
-    alt: "An Al-Baghdady catering box with compartments of mixed baklava, pistachio rolls and Iraqi sweets",
+    alt: `An ${RESTAURANT.brandShort} catering box with compartments of mixed baklava, pistachio rolls and ${RESTAURANT.servesCuisine} sweets`,
     caption: "Custom dessert trays, boxed for celebrations",
   },
   {
@@ -109,7 +110,7 @@ export default function Gallery() {
           <div className="eyebrow">Gallery</div>
           <h2 className="mb-4">A closer look at the counter.</h2>
           <p className="text-[var(--color-text-muted)]">
-            From pistachio baklava we&apos;ve been laying down since 1919 to the
+            From pistachio baklava we&apos;ve been laying down since {RESTAURANT.familyRecipeSince} to the
             zalabia rings that come out crisp every morning.
           </p>
         </div>

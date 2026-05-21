@@ -3,10 +3,6 @@ import ThemeBtn from "../shared/ThemeBtn";
 import QRHover from "../shared/QRHover";
 import { RESTAURANT } from "@/data/restaurant";
 
-const DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-  RESTAURANT.address.full
-)}`;
-
 function formatHour(time: string): string {
   const hour = parseInt(time.split(":")[0], 10);
   if (hour === 0) return "12 AM";
@@ -14,18 +10,21 @@ function formatHour(time: string): string {
   return hour < 12 ? `${hour} AM` : `${hour - 12} PM`;
 }
 
-// Day index in RESTAURANT.hours: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun.
-const WEEKDAY = RESTAURANT.hours[0];
-const FRIDAY = RESTAURANT.hours[4];
-const SUNDAY = RESTAURANT.hours[6];
-
 export default function OurLocation() {
+  // Computed in render so live config edits to RESTAURANT propagate here.
+  const DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+    RESTAURANT.address.full
+  )}`;
+  // Day index in RESTAURANT.hours: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri, 5=Sat, 6=Sun.
+  const WEEKDAY = RESTAURANT.hours[0];
+  const FRIDAY = RESTAURANT.hours[4];
+  const SUNDAY = RESTAURANT.hours[6];
   return (
     <section className="bg-white section-pad">
       <div className="container-pad">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <div className="eyebrow">Find Us</div>
-          <h2>Visit us in Richardson.</h2>
+          <h2>Visit us in {RESTAURANT.address.city}.</h2>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-5">

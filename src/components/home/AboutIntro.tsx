@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RESTAURANT } from "@/data/restaurant";
 
 /**
  * DRAFT (2026-05-21) — topical homepage SEO content + internal links to the
@@ -10,12 +11,12 @@ export default function AboutIntro() {
   return (
     <section className="bg-[var(--color-warm-white)] section-pad">
       <div className="container-pad max-w-3xl">
-        <div className="eyebrow">Baghdad to Dallas</div>
-        <h2 className="mb-5">A Family Iraqi Bakery &amp; Breakfast Café in Richardson, TX</h2>
+        <div className="eyebrow">{RESTAURANT.originCity} to {RESTAURANT.region}</div>
+        <h2 className="mb-5">A Family {RESTAURANT.servesCuisine} Bakery &amp; Breakfast Café in {RESTAURANT.address.city}, {RESTAURANT.address.state}</h2>
         <div className="space-y-4 text-[var(--color-text-muted)] leading-relaxed">
           <p>
-            Al-Baghdady is a halal Iraqi bakery and breakfast café in the heart of Richardson, serving the
-            Dallas–Fort Worth area with recipes carried from Baghdad over four generations. Our in-house
+            {RESTAURANT.brandShort} is a {RESTAURANT.dietary} {RESTAURANT.servesCuisine} bakery and breakfast café in the heart of {RESTAURANT.address.city}, serving the
+            {" "}{RESTAURANT.region} area with recipes carried from {RESTAURANT.originCity} over four generations. Our in-house
             bakery fires fresh{" "}
             <Link href="/specialties/bread/" className="link-underline text-[var(--color-text)]">samoon and tandoor bread</Link>{" "}
             every morning and turns out trays of{" "}
@@ -27,13 +28,13 @@ export default function AboutIntro() {
           </p>
           <p>
             Mornings bring a full traditional{" "}
-            <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">Iraqi breakfast</Link> — Kahi
+            <Link href="/specialties/breakfast/" className="link-underline text-[var(--color-text)]">{RESTAURANT.servesCuisine} breakfast</Link> — Kahi
             &amp; Qeimar, Baqila, Kubba and the signature Albaghdady Plate — paired with cardamom{" "}
             <Link href="/specialties/chai/" className="link-underline text-[var(--color-text)]">karak chai</Link>. Browse the full{" "}
             <Link href="/menu/" className="link-underline text-[var(--color-text)]">menu</Link>, explore our{" "}
             <Link href="/specialties/" className="link-underline text-[var(--color-text)]">specialties</Link>, or order a sweets
             spread for Eid, a wedding or a Ramadan iftar through{" "}
-            <Link href="/catering/" className="link-underline text-[var(--color-text)]">catering</Link>. Every item is 100% halal
+            <Link href="/catering/" className="link-underline text-[var(--color-text)]">catering</Link>. Every item is 100% {RESTAURANT.dietary}
             and Zabihah-verified.
           </p>
         </div>

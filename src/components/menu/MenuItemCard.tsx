@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Star, Leaf } from "lucide-react";
 import type { MenuItem } from "@/data/menu";
+import { RESTAURANT } from "@/data/restaurant";
 
 type MenuItemCardProps = {
   item: MenuItem;
@@ -47,7 +48,7 @@ export default function MenuItemCard({
             </span>
           )}
           <span className="text-[10px] font-semibold text-[var(--color-text-muted)] uppercase tracking-wider px-2.5 py-1">
-            Halal
+            {RESTAURANT.dietary}
           </span>
         </div>
       )}

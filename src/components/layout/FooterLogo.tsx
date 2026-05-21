@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RESTAURANT } from "@/data/restaurant";
 
 type Props = {
   version: string;
@@ -44,11 +45,11 @@ export default function FooterLogo({ version }: Props) {
       <button
         type="button"
         onClick={handleClick}
-        aria-label="Al-Baghdady logo"
+        aria-label={`${RESTAURANT.brandShort} logo`}
         className="p-0 m-0 bg-transparent border-0 cursor-pointer focus:outline-none"
       >
         <div
-          aria-label="Al-Baghdady Restaurant logo"
+          aria-label={`${RESTAURANT.brandShort} Restaurant logo`}
           className="h-[160px] md:h-[200px] aspect-square rounded-full ring-1 ring-white/10 select-none wireframe-img"
         />
       </button>

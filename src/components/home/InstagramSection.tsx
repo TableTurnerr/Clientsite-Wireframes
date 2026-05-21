@@ -16,46 +16,47 @@ type Post = {
   coAuthor?: string;
 };
 
-const POSTS: Post[] = [
+// Built in render (not module scope) so live config edits to RESTAURANT.* propagate.
+const buildPosts = (): Post[] => [
   {
     id: "1",
     caption: "#dfweats #foodiefinds #yum #delicious #explore #followforfollowback",
-    alt: "Iraqi sweets and bakery favorites at Al-Baghdady, halal Iraqi bakery in Richardson, TX",
+    alt: `${RESTAURANT.servesCuisine} sweets and bakery favorites at ${RESTAURANT.brandShort}, ${RESTAURANT.dietary} ${RESTAURANT.servesCuisine} bakery in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-1.webp",
     url: "https://www.instagram.com/p/DGElI-UOZ5q/",
   },
   {
     id: "2",
-    caption: "Albaghdady Bakery & Sweets Richardson, TX Fresh, authentic",
-    alt: "Fresh authentic Iraqi sweets at Albaghdady Bakery & Sweets in Richardson, TX",
+    caption: `${RESTAURANT.brandShort} Bakery & Sweets ${RESTAURANT.address.city}, ${RESTAURANT.address.state} Fresh, authentic`,
+    alt: `Fresh authentic ${RESTAURANT.servesCuisine} sweets at ${RESTAURANT.brandShort} Bakery & Sweets in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-2.webp",
     url: "https://www.instagram.com/p/DXb1QfjtwdQ/",
   },
   {
     id: "3",
     caption: "This is where to get authentic middle eastern",
-    alt: "Authentic Middle Eastern food and Iraqi sweets at Al-Baghdady in Richardson, TX",
+    alt: `Authentic Middle Eastern food and ${RESTAURANT.servesCuisine} sweets at ${RESTAURANT.brandShort} in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-3.webp",
     url: "https://www.instagram.com/p/C7XimM_vLn0/",
   },
   {
     id: "4",
-    caption: "IRAQI BREAKFAST DFW — We went back",
-    alt: "Traditional Iraqi breakfast at Al-Baghdady, serving DFW from Richardson, TX",
+    caption: `${RESTAURANT.servesCuisine} Breakfast ${RESTAURANT.regionShort} — We went back`,
+    alt: `Traditional ${RESTAURANT.servesCuisine} breakfast at ${RESTAURANT.brandShort}, serving ${RESTAURANT.regionShort} from ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-4.webp",
     url: "https://www.instagram.com/p/DRh6XRJiWNa/",
   },
   {
     id: "5",
-    caption: "Albaghdady is now serving authentic Iraqi breakfast",
-    alt: "Authentic Iraqi breakfast spread — Kahi, Qeimar and samoon — at Al-Baghdady in Richardson, TX",
+    caption: `${RESTAURANT.brandShort} is now serving authentic ${RESTAURANT.servesCuisine} breakfast`,
+    alt: `Authentic ${RESTAURANT.servesCuisine} breakfast spread — Kahi, Qeimar and samoon — at ${RESTAURANT.brandShort} in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-5.webp",
     url: "https://www.instagram.com/p/DRcx94JjmSW/",
   },
   {
     id: "6",
-    caption: "Richardson, TX — We are back",
-    alt: "Iraqi bakery and café favorites at Al-Baghdady in Richardson, TX",
+    caption: `${RESTAURANT.address.city}, ${RESTAURANT.address.state} — We are back`,
+    alt: `${RESTAURANT.servesCuisine} bakery and café favorites at ${RESTAURANT.brandShort} in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`,
     image: "/Images/instagram/post-6.webp",
     url: "https://www.instagram.com/p/DRK_1-FEZbU/",
   },
@@ -76,6 +77,7 @@ export default function InstagramSection() {
     return () => window.removeEventListener("resize", handle);
   }, []);
 
+  const POSTS = buildPosts();
   const cols: Post[][] = Array.from({ length: columns }, () => []);
   POSTS.forEach((post, i) => cols[i % columns].push(post));
 
@@ -87,7 +89,7 @@ export default function InstagramSection() {
     <section className="section-pad">
       <div className="container-pad">
         <div className="text-center mb-12 max-w-2xl mx-auto">
-          <div className="eyebrow">@albaghdadyrestaurant</div>
+          <div className="eyebrow">{RESTAURANT.instagramHandle}</div>
           <h2 className="mb-4">Follow along on Instagram</h2>
           <p className="text-[var(--color-text-muted)]">
             New dishes, daily bakes, and the occasional behind-the-kitchen moment.
@@ -166,10 +168,10 @@ export default function InstagramSection() {
                     >
                       <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/70 mb-1.5">
                         {post.coAuthor
-                          ? `@albaghdadyrestaurant & @${post.coAuthor}`.length <= 38
-                            ? `@albaghdadyrestaurant & @${post.coAuthor}`
+                          ? `${RESTAURANT.instagramHandle} & @${post.coAuthor}`.length <= 38
+                            ? `${RESTAURANT.instagramHandle} & @${post.coAuthor}`
                             : `@${post.coAuthor}`
-                          : "@albaghdadyrestaurant"}
+                          : RESTAURANT.instagramHandle}
                       </div>
                       <div
                         className="leading-snug transition-all duration-400"
@@ -198,7 +200,7 @@ export default function InstagramSection() {
               className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-text)] link-underline"
             >
               <Instagram size={16} strokeWidth={1.75} />
-              Follow @albaghdadyrestaurant
+              Follow {RESTAURANT.instagramHandle}
             </a>
           </QRHover>
         </div>

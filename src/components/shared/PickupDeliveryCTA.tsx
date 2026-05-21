@@ -20,7 +20,7 @@ export default function PickupDeliveryCTA({ itemName }: Props) {
         <h2 className="mb-6">{heading}</h2>
         <p className="text-lg text-[var(--color-text-muted)] leading-relaxed mb-8">
           Skip the wait — order online for same-day pickup at our {RESTAURANT.address.city} bakery,
-          or have your order delivered across the Dallas–Fort Worth area. Everything is baked fresh
+          or have your order delivered across the {RESTAURANT.region} area. Everything is baked fresh
           daily and ready when you are.
         </p>
         <div className="flex flex-wrap gap-3">

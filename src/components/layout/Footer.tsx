@@ -4,20 +4,20 @@ import FooterLogo from "./FooterLogo";
 import { RESTAURANT } from "@/data/restaurant";
 import pkg from "../../../package.json";
 
-const QUICK_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/menu/", label: "Menu" },
-  { href: "/specialties/", label: "Specialties" },
-  { href: "/our-story/", label: "Our Story" },
-  { href: "/iraqi-cuisine/", label: "Iraqi Cuisine" },
-  { href: "/bakery/", label: "Bakery" },
-  { href: "/catering/", label: "Catering" },
-  { href: "/near/", label: "Service Areas" },
-  { href: "/?review=open", label: "Leave a Review" },
-  { href: "/return-policy/", label: "Return Policy" },
-];
-
 export default function Footer() {
+  // Computed in render so live config edits to the cuisine propagate.
+  const QUICK_LINKS = [
+    { href: "/", label: "Home" },
+    { href: "/menu/", label: "Menu" },
+    { href: "/specialties/", label: "Specialties" },
+    { href: "/our-story/", label: "Our Story" },
+    { href: "/iraqi-cuisine/", label: `${RESTAURANT.servesCuisine} Cuisine` },
+    { href: "/bakery/", label: "Bakery" },
+    { href: "/catering/", label: "Catering" },
+    { href: "/near/", label: "Service Areas" },
+    { href: "/?review=open", label: "Leave a Review" },
+    { href: "/return-policy/", label: "Return Policy" },
+  ];
   return (
     <footer
       className="w-full px-[10px] md:px-[50px] lg:px-[70px] pt-12 md:pt-16 pb-[20px] sm:pb-[10px] mt-12"
@@ -27,10 +27,10 @@ export default function Footer() {
         className="text-4xl sm:text-5xl md:text-6xl w-full text-white leading-none text-center"
         style={{ letterSpacing: "-0.04em", fontWeight: 700 }}
       >
-        Al-Baghdady
+        {RESTAURANT.brandShort}
       </div>
       <div className="mt-3 mb-10 max-w-4xl mx-auto text-sm md:text-base leading-relaxed text-center" style={{ color: "rgba(255,255,255,0.62)" }}>
-        {RESTAURANT.footerDescription}
+        {`An authentic ${RESTAURANT.servesCuisine} bakery and breakfast café in the heart of ${RESTAURANT.address.city}, ${RESTAURANT.stateFull}. From traditional ${RESTAURANT.servesCuisine} breakfast and fresh-baked samoon to baklava, kunafa, mabrouma and our family's ${RESTAURANT.servesCuisine} sweets, every item is rooted in recipes carried from ${RESTAURANT.originCity} to ${RESTAURANT.region}. ${RESTAURANT.dietary} across the entire menu, Zabihah verified, with an in-house bakery firing fresh bread and pastries throughout the day. Whether you're here for a morning chai, a box of sweets, or catering for a hundred guests, we're glad you found us. Come hungry — leave full.`}
       </div>
 
       <div className="container mx-auto">
@@ -42,7 +42,7 @@ export default function Footer() {
                 href={RESTAURANT.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Al-Baghdady on Instagram"
+                aria-label={`${RESTAURANT.brandShort} on Instagram`}
                 className="min-w-[100px] p-2 py-4 h-full w-full items-center justify-center flex rounded-lg group transition-colors duration-300 bg-white/5 hover:bg-[var(--color-primary)]/85"
               >
                 <svg
@@ -81,7 +81,7 @@ export default function Footer() {
                 href={RESTAURANT.socials.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Al-Baghdady on Facebook"
+                aria-label={`${RESTAURANT.brandShort} on Facebook`}
                 className="p-2 py-4 h-full w-full items-center justify-center flex rounded-lg group transition-colors duration-300 bg-white/5 hover:bg-[var(--color-primary)]/85"
               >
                 <svg
@@ -157,7 +157,7 @@ export default function Footer() {
       >
         <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center text-center text-xs gap-[20px]" style={{ color: "rgba(255,255,255,0.9)" }}>
           <p className="hidden sm:block" style={{ color: "rgba(255,255,255,0.9)" }}>
-            Al-Baghdady Restaurant &amp; Bakery © {new Date().getFullYear()}. All Rights Reserved.
+            {RESTAURANT.legalName} © {new Date().getFullYear()}. All Rights Reserved.
           </p>
           <p className="text-nowrap" style={{ color: "rgba(255,255,255,0.9)" }}>
             Made with{" "}
@@ -168,7 +168,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="block sm:hidden w-full text-center text-[10px] mt-2" style={{ color: "rgba(255,255,255,0.9)" }}>
-        Al-Baghdady Restaurant &amp; Bakery © {new Date().getFullYear()}. All Rights Reserved.
+        {RESTAURANT.legalName} © {new Date().getFullYear()}. All Rights Reserved.
       </div>
     </footer>
   );

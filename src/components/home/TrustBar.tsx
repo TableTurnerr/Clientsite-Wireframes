@@ -1,12 +1,13 @@
 import { Wheat, Users, ChefHat } from "lucide-react";
-
-const ITEMS = [
-  { icon: Wheat, label: "In-House Bakery", sub: "Daily fresh samoon" },
-  { icon: ChefHat, label: "Authentic Iraqi", sub: "Traditional recipes" },
-  { icon: Users, label: "Family Owned", sub: "Since 2012" },
-];
+import { RESTAURANT } from "@/data/restaurant";
 
 export default function TrustBar() {
+  // Computed in render so live config edits propagate.
+  const ITEMS = [
+    { icon: Wheat, label: "In-House Bakery", sub: "Daily fresh samoon" },
+    { icon: ChefHat, label: `Authentic ${RESTAURANT.servesCuisine}`, sub: "Traditional recipes" },
+    { icon: Users, label: "Family Owned", sub: `Since ${RESTAURANT.founded}` },
+  ];
   return (
     <section className="container-pad py-6 md:py-8 border-t border-b border-[var(--color-border)]">
       <div className="grid grid-cols-3 gap-4 md:gap-6">

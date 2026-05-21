@@ -5,20 +5,23 @@ import { ArrowRight, Hand, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import SmartImage from "../shared/SmartImage";
 import { MENU } from "@/data/menu";
-
-const featured = MENU.flatMap((category) =>
-  category.items
-    .filter((item) => item.popular)
-    .map((item) => ({
-      name: item.name,
-      description: item.description,
-      price: item.price,
-      category: category.name,
-      image: item.image,
-    }))
-).slice(0, 6);
+import { RESTAURANT } from "@/data/restaurant";
+import { COPY } from "@/data/copy";
 
 export default function FeaturedDishes() {
+  // Computed in render so live config edits to MENU propagate here.
+  const featured = MENU.flatMap((category) =>
+    category.items
+      .filter((item) => item.popular)
+      .map((item) => ({
+        name: item.name,
+        description: item.description,
+        price: item.price,
+        category: category.name,
+        image: item.image,
+      }))
+  ).slice(0, 6);
+
   const scrollerRef = useRef<HTMLDivElement>(null);
   const directionRef = useRef<0 | 1 | -1>(0);
   const speedRef = useRef<number>(0);
@@ -104,8 +107,8 @@ export default function FeaturedDishes() {
       <div className="container-pad">
         <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
           <div>
-            <div className="eyebrow">Most Loved</div>
-            <h2>Featured dishes.</h2>
+            <div className="eyebrow">{COPY.homeFeaturedEyebrow}</div>
+            <h2>{COPY.homeFeaturedHeading}</h2>
           </div>
           <Link
             href="/menu/"
@@ -135,7 +138,7 @@ export default function FeaturedDishes() {
                   <div className="card-img aspect-[4/3]">
                     <SmartImage
                       src={dish.image}
-                      alt={`${dish.name} — ${dish.category.toLowerCase()} at Al-Baghdady, halal Iraqi bakery & café in Richardson, TX`}
+                      alt={`${dish.name} — ${dish.category.toLowerCase()} at ${RESTAURANT.brandShort}, ${RESTAURANT.dietary} ${RESTAURANT.servesCuisine} bakery & café in ${RESTAURANT.address.city}, ${RESTAURANT.address.state}`}
                       sizes="(min-width: 768px) 320px, 280px"
                       className="w-full h-full"
                     />
