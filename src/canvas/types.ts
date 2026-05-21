@@ -1,3 +1,5 @@
+import type { ComponentType } from "react";
+
 /* ============================================================
    The declarative wireframe model.
    A page is data, not JSX — so wireframes stay consistent and
@@ -112,4 +114,18 @@ export interface ClusterLabel {
   desc?: string;
   x: number;
   y: number;
+}
+
+/**
+ * A wireframe page = the REAL Al-Baghdady page (composed from the real
+ * components) plus its side annotations. `Page` renders the actual markup;
+ * images are boxed via the wireframe SmartImage.
+ */
+export interface WirePage {
+  id: string;
+  title: string;
+  route: string;
+  group: string;
+  notes: WfNote[];
+  Page: ComponentType;
 }
