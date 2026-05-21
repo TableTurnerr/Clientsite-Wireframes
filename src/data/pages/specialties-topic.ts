@@ -22,6 +22,7 @@ export const specialtiesTopic: WireframePage = {
       id: "hero",
       kind: "hero",
       label: "Topic hero (text + image)",
+      variant: "topic",
       eyebrow: "OUR FLAGSHIP",
       heading: "Authentic baklava in Richardson, TX",
       body: 1,

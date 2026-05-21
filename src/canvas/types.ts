@@ -45,7 +45,11 @@ export type WfSectionKind =
   | "tabs"
   | "logos"
   | "stat"
-  | "locationcard";
+  | "locationcard"
+  | "pressquote"
+  | "actioncards"
+  | "featured"
+  | "instagram";
 
 export interface WfSection {
   id: string;
@@ -67,6 +71,10 @@ export interface WfSection {
   /** chip labels (cities, topics, tags…) */
   chips?: string[];
   chipStyle?: "city" | "gold" | "plain";
+  /** secondary lines paired with chips (trustbar sub-labels, action-card sublines) */
+  subs?: string[];
+  /** override the default header alignment for a section */
+  align?: "center" | "left";
   /** show a "fetched from <data file>" ribbon under a product block */
   source?: string;
   accent?: "primary" | "gold" | "sand" | "plain" | "dark";

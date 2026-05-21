@@ -17,6 +17,7 @@ export const ourStory: WireframePage = {
       id: "hero",
       kind: "hero",
       label: "Story hero + wide image",
+      variant: "wide",
       eyebrow: "OUR STORY",
       heading: "The 100-Year Story of Dallas's Best Iraqi Bakery & Breakfast Café",
       body: 1,

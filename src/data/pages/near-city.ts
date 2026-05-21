@@ -22,6 +22,7 @@ export const nearCity: WireframePage = {
       id: "hero",
       kind: "hero",
       label: "City hero (text + image)",
+      variant: "city",
       eyebrow: "SERVING PLANO, TX",
       heading: "Iraqi Bakery & Breakfast for Plano",
       body: 1,
