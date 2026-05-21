@@ -205,7 +205,7 @@ function Body({ s }: { s: WfSection }) {
           <div className="wf-hero2">
             {textCol}
             <div className="wf-hero-img">
-              <Img h={150} label="HERO IMG" />
+              <Img h={230} label="HERO IMG" />
               {v === "home" && (
                 <>
                   <div className="wf-hero-badge-since">
@@ -229,7 +229,7 @@ function Body({ s }: { s: WfSection }) {
           {textCol}
           {s.image && v === "wide" && (
             <div style={{ marginTop: 12 }}>
-              <Img h={120} label="WIDE IMG (16:9)" />
+              <Img h={210} label="WIDE IMG (16:9)" />
             </div>
           )}
         </div>
@@ -443,7 +443,7 @@ function Body({ s }: { s: WfSection }) {
 
     case "instagram": {
       const cols = 3;
-      const heights = [70, 86, 64, 80, 68, 84];
+      const heights = [120, 150, 108, 140, 116, 146];
       return (
         <div>
           <SecHead eyebrow={s.eyebrow ?? "@albaghdadyrestaurant"} heading={s.heading ?? "Follow along on Instagram"} align="center" />
@@ -500,7 +500,7 @@ function Body({ s }: { s: WfSection }) {
     case "faq": {
       const items = s.items ?? 4;
       return (
-        <div>
+        <div style={{ maxWidth: 780, margin: "0 auto" }}>
           <SecHead eyebrow={s.eyebrow ?? "Got Questions?"} heading={s.heading ?? "Frequently asked questions."} align="center" />
           <div>
             {Array.from({ length: items }).map((_, i) => (
@@ -547,7 +547,7 @@ function Body({ s }: { s: WfSection }) {
 
     case "cta":
       return (
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: "center", maxWidth: 720, margin: "0 auto" }}>
           {s.eyebrow && <span className="wf-eyebrow">{s.eyebrow}</span>}
           {s.heading && <div className="wf-h lg">{s.heading}</div>}
           {s.body ? <Bars n={s.body} /> : null}
@@ -697,7 +697,7 @@ function Body({ s }: { s: WfSection }) {
     case "text":
     default:
       return (
-        <div>
+        <div style={{ maxWidth: 820, margin: s.align === "center" ? "0 auto" : undefined }}>
           <SecHead eyebrow={s.eyebrow} heading={s.heading} align={s.align ?? "left"} />
           <Bars n={s.body ?? 5} />
           <Btns items={s.buttons} />

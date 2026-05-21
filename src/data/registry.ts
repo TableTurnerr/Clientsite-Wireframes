@@ -44,58 +44,73 @@ export const PAGES: WireframePage[] = [
   notFound,
 ];
 
-const X0 = 60;
-const STEP_X = 1240;
+// --- canvas layout (desktop-width frames) ---
+// Each frame group = left notes (248) + gap (96) + frame (1200) + gap (96) + right notes (248) = 1888 wide.
+const X0 = 80;
+const STEP_X = 2120;
+const ROW_STEP = 3350; // tall enough for the tallest desktop page (home) + notes
+const LABEL_BAND = 210;
+const CLUSTER_GAP = 360;
+const PER_ROW = 4;
+const GROUP_W = 1888;
 
-function row(ids: string[], y: number, startX = X0, step = STEP_X): CanvasPlacement[] {
-  return ids.map((id, i) => ({ id, x: startX + i * step, y }));
+interface ClusterDef {
+  kicker: string;
+  title: string;
+  desc: string;
+  ids: string[];
 }
 
-export const PLACEMENTS: CanvasPlacement[] = [
-  // 01 — Core Pages
-  ...row(["home", "menu", "bakery", "catering"], 220),
-  ...row(["iraqi-cuisine", "our-story", "return-policy"], 1990),
-
-  // 02 — Dynamic SEO Templates
-  ...row(["near-hub", "near-city", "specialties-hub", "specialties-topic"], 3520),
-  ...row(["dish-city-mesh"], 5290),
-
-  // 03 — Multi-Location
-  ...row(["locations-hub", "location-single"], 6720),
-
-  // 04 — Shared Chrome & States
-  ...row(["header", "footer", "review-modal", "not-found"], 8250),
-];
-
-export const LABELS: ClusterLabel[] = [
+const CLUSTERS: ClusterDef[] = [
   {
     kicker: "01 · Live today",
     title: "Core Pages",
     desc: "The seven hand-built pages every client site ships with.",
-    x: X0,
-    y: 40,
+    ids: ["home", "menu", "bakery", "catering", "iraqi-cuisine", "our-story", "return-policy"],
   },
   {
     kicker: "02 · The growth engine",
     title: "Dynamic SEO Templates",
     desc: "One file → many pages. generateStaticParams() pre-renders every city, topic, and (planned) dish×city combination.",
-    x: X0,
-    y: 3340,
+    ids: ["near-hub", "near-city", "specialties-hub", "specialties-topic", "dish-city-mesh"],
   },
   {
     kicker: "03 · Optional extension",
     title: "Multi-Location",
     desc: "For clients with more than one venue — the single RESTAURANT object becomes a LOCATIONS[] array, each branch with its own NAP, geo and schema.",
-    x: X0,
-    y: 6540,
+    ids: ["locations-hub", "location-single"],
   },
   {
     kicker: "04 · Reused everywhere",
     title: "Shared Chrome & States",
     desc: "Header, footer, review modal and error states rendered across every page.",
-    x: X0,
-    y: 8070,
+    ids: ["header", "footer", "review-modal", "not-found"],
   },
 ];
 
-export const WORLD = { width: 5320, height: 9520 };
+function buildLayout() {
+  const placements: CanvasPlacement[] = [];
+  const labels: ClusterLabel[] = [];
+  let y = 80;
+  for (const c of CLUSTERS) {
+    labels.push({ kicker: c.kicker, title: c.title, desc: c.desc, x: X0, y });
+    y += LABEL_BAND;
+    for (let i = 0; i < c.ids.length; i += PER_ROW) {
+      const rowIds = c.ids.slice(i, i + PER_ROW);
+      rowIds.forEach((id, col) => {
+        placements.push({ id, x: X0 + col * STEP_X, y });
+      });
+      y += ROW_STEP;
+    }
+    y += CLUSTER_GAP;
+  }
+  const width = X0 + (PER_ROW - 1) * STEP_X + GROUP_W + 120;
+  const height = y + 200;
+  return { placements, labels, world: { width, height } };
+}
+
+const LAYOUT = buildLayout();
+
+export const PLACEMENTS: CanvasPlacement[] = LAYOUT.placements;
+export const LABELS: ClusterLabel[] = LAYOUT.labels;
+export const WORLD = LAYOUT.world;

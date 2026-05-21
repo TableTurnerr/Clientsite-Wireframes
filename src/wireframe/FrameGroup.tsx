@@ -5,9 +5,11 @@ import type { WireframePage } from "@/canvas/types";
 import { WireframeFrame } from "./WireframeFrame";
 import { Note } from "./Note";
 
-const NOTE_W = 232;
-const GAP = 78;
+const NOTE_W = 248;
+const GAP = 96;
 const PACK_GAP = 14;
+// Frames render at desktop width (a real browser viewport), not a narrow column.
+const DESKTOP_W = 1200;
 
 interface NoteMeta {
   id: string;
@@ -59,7 +61,9 @@ export function FrameGroup({
   x: number;
   y: number;
 }) {
-  const frameW = page.width ?? 380;
+  // All frames are desktop width; page.width is kept in the model but no longer
+  // used for the canvas (every page is shown as a desktop viewport).
+  const frameW = DESKTOP_W;
   const frameLeft = NOTE_W + GAP;
   const frameRight = frameLeft + frameW;
   const rightColLeft = frameRight + GAP;
