@@ -1,0 +1,171 @@
+import type { WireframePage } from "@/canvas/types";
+
+// Content / SEO cornerstone page. Long-form copy + internal links into the
+// /specialties/* mesh and /menu/. Carries Article + FAQPage schema.
+export const iraqiCuisine: WireframePage = {
+  id: "iraqi-cuisine",
+  title: "Iraqi Cuisine",
+  route: "/iraqi-cuisine/",
+  group: "Core Pages",
+  blurb: "Cornerstone content page; links into /specialties/* and /menu/.",
+  width: 400,
+  sections: [
+    {
+      id: "hdr",
+      kind: "header",
+      label: "Header (global)",
+      heading: "Al-Baghdady",
+      buttons: ["Order Online"],
+      items: 6,
+    },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Iraqi Cuisine"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "Cuisine Hero",
+      accent: "primary",
+      eyebrow: "IRAQI CUISINE",
+      heading: "A Taste of Iraq in Richardson",
+      body: 2,
+    },
+    {
+      id: "about",
+      kind: "text",
+      label: "About Iraqi food",
+      heading: "What makes Iraqi food special",
+      body: 4,
+    },
+    {
+      id: "dishes",
+      kind: "grid",
+      label: "Signature dishes",
+      heading: "Signature Iraqi dishes",
+      cols: 2,
+      items: 6,
+      itemLabel: "DISH",
+      source: "menu.ts + specialties.ts",
+    },
+    {
+      id: "gallery",
+      kind: "gallery",
+      label: "Gallery",
+      heading: "From our kitchen",
+      cols: 3,
+      items: 6,
+    },
+    {
+      id: "faq",
+      kind: "faq",
+      label: "FAQSection",
+      heading: "Iraqi cuisine FAQs",
+      items: 4,
+      source: "faqs.ts",
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Come taste Iraq in Richardson",
+      buttons: ["View Menu", "gold:Call"],
+    },
+    {
+      id: "ftr",
+      kind: "footer",
+      label: "Footer (global)",
+      heading: "Al-Baghdady",
+    },
+  ],
+  notes: [
+    {
+      id: "n-seo",
+      anchor: "hero",
+      side: "left",
+      title: "Content / SEO page",
+      lines: [
+        { sys: "seo", text: "`createMetadata()` → title/desc/canonical/OG" },
+        { sys: "seo", text: "`articleSchema()` (cornerstone content) via `<SchemaInjector>`" },
+        { sys: "color", text: "Eyebrow `--color-primary`, H1 `--font-accent`" },
+        { sys: "color", text: "Hero tint bg `--color-primary`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "right",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "brand", text: "Last crumb = \"Iraqi Cuisine\"" },
+      ],
+    },
+    {
+      id: "n-about",
+      anchor: "about",
+      side: "left",
+      title: "Long-form body",
+      lines: [
+        { sys: "brand", text: "Cuisine tags = `RESTAURANT.cuisine[]`" },
+        { sys: "seo", text: "Inline links into `/specialties/*` + `/menu/` (internal mesh)" },
+        { sys: "color", text: "Prose links = `.faq-link` (`--color-primary`)" },
+      ],
+    },
+    {
+      id: "n-dishes",
+      anchor: "dishes",
+      side: "right",
+      title: "Dishes = parent → child",
+      lines: [
+        { sys: "product", text: "Referenced from `menu.ts` → `MENU` + `specialties.ts` → `SPECIALTIES`" },
+        { sys: "seo", text: "Each card deep-links to its `/specialties/[topic]/` page" },
+        { sys: "layout", text: "2-col grid of dish cards" },
+      ],
+    },
+    {
+      id: "n-gallery",
+      anchor: "gallery",
+      side: "left",
+      title: "Gallery",
+      lines: [
+        { sys: "layout", text: "Tiles render through `SmartImage`" },
+        { sys: "color", text: "Section bg `--color-sand`" },
+      ],
+    },
+    {
+      id: "n-faq",
+      anchor: "faq",
+      side: "right",
+      title: "FAQSection",
+      lines: [
+        { sys: "product", text: "Questions = `faqs.ts` → `FAQS`" },
+        { sys: "seo", text: "`faqSchema()` injects `FAQPage` JSON-LD" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "left",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "Band bg `--color-primary`, gold CTA `--color-gold`" },
+        { sys: "brand", text: "Call = `RESTAURANT.phone`" },
+      ],
+    },
+    {
+      id: "n-ftr",
+      anchor: "ftr",
+      side: "right",
+      title: "Global Footer",
+      lines: [
+        { sys: "layout", text: "Shared `<Footer>` on every page" },
+        { sys: "brand", text: "NAP + hours from `RESTAURANT`" },
+        { sys: "brand", text: "Social icons → `RESTAURANT.socials.*`" },
+      ],
+    },
+  ],
+};

@@ -1,0 +1,168 @@
+import type { WireframePage } from "@/canvas/types";
+
+// In-house bakery landing page. Heritage storytelling + a filtered slice of
+// MENU (the bakery & sweets categories) rendered as product cards.
+export const bakery: WireframePage = {
+  id: "bakery",
+  title: "Bakery",
+  route: "/bakery/",
+  group: "Core Pages",
+  blurb: "Heritage story + bakery/sweets cards pulled from MENU.",
+  width: 400,
+  sections: [
+    {
+      id: "hdr",
+      kind: "header",
+      label: "Header (global)",
+      heading: "Al-Baghdady",
+      buttons: ["Order Online"],
+      items: 6,
+    },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Bakery"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "Bakery Hero",
+      accent: "primary",
+      eyebrow: "IN-HOUSE BAKERY",
+      heading: "Our In-House Arabic Bakery",
+      body: 2,
+      image: true,
+    },
+    {
+      id: "story",
+      kind: "split",
+      label: "Heritage story",
+      heading: "Baked fresh in our tandoor since 1919",
+      body: 3,
+      buttons: ["See the Menu"],
+      itemLabel: "BAKERY",
+    },
+    {
+      id: "products",
+      kind: "cards",
+      label: "Bakery case",
+      heading: "From the bakery case",
+      cols: 3,
+      items: 6,
+      itemLabel: "DISH",
+      source: "menu.ts → MENU (bakery & sweets)",
+    },
+    {
+      id: "gallery",
+      kind: "gallery",
+      label: "Gallery",
+      heading: "Inside the bakery",
+      cols: 3,
+      items: 6,
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Order a box of sweets today",
+      buttons: ["Order Online", "gold:Call"],
+    },
+    {
+      id: "ftr",
+      kind: "footer",
+      label: "Footer (global)",
+      heading: "Al-Baghdady",
+    },
+  ],
+  notes: [
+    {
+      id: "n-seo",
+      anchor: "hero",
+      side: "left",
+      title: "Page-level SEO",
+      lines: [
+        { sys: "seo", text: "`createMetadata()` → title/desc/canonical/OG" },
+        { sys: "seo", text: "`restaurantSchema()` (Bakery facet) via `<SchemaInjector>`" },
+        { sys: "color", text: "Eyebrow `--color-primary`, H1 `--font-accent`" },
+        { sys: "color", text: "Hero tint bg `--color-primary`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "right",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "brand", text: "Last crumb = \"Bakery\"" },
+      ],
+    },
+    {
+      id: "n-story",
+      anchor: "story",
+      side: "left",
+      title: "Heritage story",
+      lines: [
+        { sys: "brand", text: "Copy = `RESTAURANT.longDescription` (founder Salah Hassan)" },
+        { sys: "brand", text: "\"1919\" = `RESTAURANT.familyRecipeSince`" },
+        { sys: "color", text: "Eyebrow `--color-primary`, heading `--font-accent`" },
+        { sys: "layout", text: "Image-left / text-right split" },
+      ],
+    },
+    {
+      id: "n-products",
+      anchor: "products",
+      side: "right",
+      title: "Products = parent → child",
+      lines: [
+        { sys: "product", text: "Source of truth: `menu.ts` → `MENU`" },
+        { sys: "product", text: "Filtered to bakery & sweets categories" },
+        { sys: "product", text: "Each card: `item.name` · `item.price` · `item.image`" },
+        { sys: "layout", text: "Swap `MENU` once → bakery + menu both update" },
+      ],
+    },
+    {
+      id: "n-cards-style",
+      anchor: "products",
+      side: "left",
+      title: "Card styling",
+      lines: [
+        { sys: "color", text: "`.card` shell, border `--color-border`" },
+        { sys: "layout", text: "Photos via `SmartImage` (shimmer skeleton)" },
+      ],
+    },
+    {
+      id: "n-gallery",
+      anchor: "gallery",
+      side: "right",
+      title: "Gallery",
+      lines: [
+        { sys: "layout", text: "Tiles render through `SmartImage`" },
+        { sys: "color", text: "Section bg `--color-sand`" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "left",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "Gold CTA = `.btn-gold` (`--color-gold`)" },
+        { sys: "brand", text: "Order link = `RESTAURANT.orderOnline`, Call = `RESTAURANT.phone`" },
+      ],
+    },
+    {
+      id: "n-ftr",
+      anchor: "ftr",
+      side: "right",
+      title: "Global Footer",
+      lines: [
+        { sys: "layout", text: "Shared `<Footer>` on every page" },
+        { sys: "brand", text: "NAP + hours from `RESTAURANT`" },
+        { sys: "brand", text: "Social icons → `RESTAURANT.socials.*`" },
+      ],
+    },
+  ],
+};

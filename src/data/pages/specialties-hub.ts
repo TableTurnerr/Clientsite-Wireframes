@@ -1,0 +1,157 @@
+import type { WireframePage } from "@/canvas/types";
+
+// Hub for the specialty/topic mesh. Links out to every /specialties/[topic]/
+// page. The 11 cards + chips are generated from SPECIALTIES — never hand-listed.
+export const specialtiesHub: WireframePage = {
+  id: "specialties-hub",
+  title: "Specialties",
+  route: "/specialties/",
+  group: "Dynamic SEO Templates",
+  blurb: "Hub page linking to all 11 /specialties/[topic]/ pages, sourced from SPECIALTIES.",
+  width: 400,
+  sections: [
+    {
+      id: "hdr",
+      kind: "header",
+      label: "Header (global)",
+      heading: "Al-Baghdady",
+      buttons: ["Order Online"],
+      items: 6,
+    },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Specialties"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "Hub Hero",
+      accent: "primary",
+      eyebrow: "SPECIALTIES",
+      heading: "Our Specialties",
+      body: 2,
+    },
+    {
+      id: "grid",
+      kind: "grid",
+      label: "Topic cards",
+      heading: "Explore by specialty",
+      cols: 2,
+      items: 11,
+      itemLabel: "TOPIC",
+      source: "specialties.ts → SPECIALTIES",
+    },
+    {
+      id: "chipsRow",
+      kind: "text",
+      label: "Topic chips",
+      chips: [
+        "Bread",
+        "Chai",
+        "Burma",
+        "Lady Fingers",
+        "Samosa",
+        "Kunafa",
+        "Baklava",
+        "Breakfast",
+        "Manakish",
+        "Fatayer",
+        "Halal Food",
+      ],
+      chipStyle: "gold",
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Order your favorites for pickup or delivery",
+      buttons: ["View Menu", "gold:Call Us"],
+    },
+    {
+      id: "ftr",
+      kind: "footer",
+      label: "Footer (global)",
+      heading: "Al-Baghdady",
+    },
+  ],
+  notes: [
+    {
+      id: "n-hub",
+      anchor: "grid",
+      side: "right",
+      title: "Hub → spoke mesh",
+      lines: [
+        { sys: "product", text: "11 cards = `specialties.ts` → `SPECIALTIES`" },
+        { sys: "layout", text: "Each card links to `/specialties/[topic]/`" },
+        { sys: "layout", text: "`generateStaticParams()` pre-renders one page per topic" },
+        { sys: "product", text: "Topic page later fetches `relatedMenuItemNames` → `MENU`" },
+      ],
+    },
+    {
+      id: "n-seo",
+      anchor: "hero",
+      side: "left",
+      title: "Page-level SEO",
+      lines: [
+        { sys: "seo", text: "`createMetadata()` → title/desc/canonical/OG" },
+        { sys: "seo", text: "`ItemList` schema enumerating the topic pages" },
+        { sys: "color", text: "Eyebrow `--color-primary`, H1 `--font-accent`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "left",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "layout", text: "Shared `<BreadcrumbNav>` component" },
+      ],
+    },
+    {
+      id: "n-cards",
+      anchor: "grid",
+      side: "left",
+      title: "Each card = topic fields",
+      lines: [
+        { sys: "product", text: "Title = `specialty.name`, link = `specialty.slug`" },
+        { sys: "layout", text: "Thumb = `specialty.image` via `SmartImage`" },
+        { sys: "color", text: "Card border `--color-border`, hover lift" },
+      ],
+    },
+    {
+      id: "n-chips",
+      anchor: "chipsRow",
+      side: "right",
+      title: "Topic chips",
+      lines: [
+        { sys: "product", text: "Chips map from `SPECIALTIES[].name`" },
+        { sys: "color", text: "Chip border `--color-gold` (`chipStyle: gold`)" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "right",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "Band bg `--color-primary`, gold CTA `--color-gold`" },
+        { sys: "brand", text: "Call = `RESTAURANT.phone`" },
+      ],
+    },
+    {
+      id: "n-ftr",
+      anchor: "ftr",
+      side: "right",
+      title: "Global Footer",
+      lines: [
+        { sys: "layout", text: "Shared `<Footer>` on every page" },
+        { sys: "brand", text: "NAP + hours from `RESTAURANT`" },
+        { sys: "color", text: "Bg `--color-sand`, accents `--color-primary`" },
+      ],
+    },
+  ],
+};

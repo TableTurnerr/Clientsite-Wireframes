@@ -1,0 +1,171 @@
+import type { WireframePage } from "@/canvas/types";
+
+// Catering landing page. The quote form is mailto-based (no backend), so the
+// whole page can stay static. Trays are illustrative pulls from MENU.
+export const catering: WireframePage = {
+  id: "catering",
+  title: "Catering",
+  route: "/catering/",
+  group: "Core Pages",
+  blurb: "Mailto-based quote form, catering trays from MENU, areas served.",
+  width: 400,
+  sections: [
+    {
+      id: "hdr",
+      kind: "header",
+      label: "Header (global)",
+      heading: "Al-Baghdady",
+      buttons: ["Order Online"],
+      items: 6,
+    },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Catering"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "Catering Hero",
+      accent: "sand",
+      eyebrow: "CATERING",
+      heading: "Catering for Dallas–Fort Worth",
+      body: 2,
+    },
+    {
+      id: "intro",
+      kind: "text",
+      label: "Intro block",
+      heading: "Trays, breakfasts & event spreads",
+      body: 3,
+    },
+    {
+      id: "packages",
+      kind: "cards",
+      label: "Catering trays",
+      heading: "Popular catering trays",
+      cols: 3,
+      items: 3,
+      itemLabel: "TRAY",
+      source: "menu.ts → MENU",
+    },
+    {
+      id: "form",
+      kind: "form",
+      label: "CateringForm",
+      heading: "Request a quote",
+      items: 6,
+      buttons: ["Request a Quote"],
+    },
+    {
+      id: "areas",
+      kind: "map",
+      label: "Areas served",
+      heading: "Areas we cater",
+      body: 2,
+      buttons: ["Get Directions"],
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Planning an event? Let's talk",
+      buttons: ["Request a Quote", "gold:Call"],
+    },
+    {
+      id: "ftr",
+      kind: "footer",
+      label: "Footer (global)",
+      heading: "Al-Baghdady",
+    },
+  ],
+  notes: [
+    {
+      id: "n-seo",
+      anchor: "hero",
+      side: "left",
+      title: "Page-level SEO",
+      lines: [
+        { sys: "seo", text: "`createMetadata()` → title/desc/canonical/OG" },
+        { sys: "seo", text: "`cateringServiceSchema()` → `Service` JSON-LD" },
+        { sys: "seo", text: "`restaurantSchema()` as provider, via `<SchemaInjector>`" },
+        { sys: "color", text: "Eyebrow `--color-primary`, hero bg `--color-sand`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "right",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "brand", text: "Last crumb = \"Catering\"" },
+      ],
+    },
+    {
+      id: "n-intro",
+      anchor: "intro",
+      side: "left",
+      title: "Intro copy",
+      lines: [
+        { sys: "brand", text: "Reach blurb = `RESTAURANT.cateringAreas`" },
+        { sys: "color", text: "Heading `--font-accent`, text `--color-text-muted`" },
+      ],
+    },
+    {
+      id: "n-packages",
+      anchor: "packages",
+      side: "right",
+      title: "Trays = parent → child",
+      lines: [
+        { sys: "product", text: "Source of truth: `menu.ts` → `MENU`" },
+        { sys: "product", text: "Tray cards pull `item.name` / `item.image`" },
+        { sys: "layout", text: "Edit `MENU` once → trays + menu both update" },
+      ],
+    },
+    {
+      id: "n-form",
+      anchor: "form",
+      side: "left",
+      title: "CateringForm (no backend)",
+      lines: [
+        { sys: "layout", text: "`CateringForm` is mailto-based — NO server/API" },
+        { sys: "brand", text: "Submits to `RESTAURANT.email`" },
+        { sys: "color", text: "Submit = `.btn-gold` (`--color-gold`)" },
+      ],
+    },
+    {
+      id: "n-areas",
+      anchor: "areas",
+      side: "right",
+      title: "Areas we cater",
+      lines: [
+        { sys: "brand", text: "Cities list = `RESTAURANT.cateringAreas` / `areasServed`" },
+        { sys: "brand", text: "Shared `RESTAURANT.address` / `geo` for map + directions" },
+        { sys: "seo", text: "`areaServed` cities mirror the `Service` schema" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "left",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "Band bg `--color-primary`, gold CTA `--color-gold`" },
+        { sys: "brand", text: "Call = `RESTAURANT.phone`" },
+      ],
+    },
+    {
+      id: "n-ftr",
+      anchor: "ftr",
+      side: "right",
+      title: "Global Footer",
+      lines: [
+        { sys: "layout", text: "Shared `<Footer>` on every page" },
+        { sys: "brand", text: "NAP + hours from `RESTAURANT`" },
+      ],
+    },
+  ],
+};

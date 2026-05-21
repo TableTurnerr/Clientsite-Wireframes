@@ -1,0 +1,163 @@
+import type { WireframePage } from "@/canvas/types";
+
+// Dynamic SEO template: ONE file renders all 11 specialty/topic pages.
+// generateStaticParams() pre-renders 1 page per entry in SPECIALTIES.
+export const specialtiesTopic: WireframePage = {
+  id: "specialties-topic",
+  title: "Topic (template)",
+  route: "/specialties/[topic]/",
+  group: "Dynamic SEO Templates",
+  blurb: "Topic landing page. One file renders all 11 SPECIALTIES (baklava, kunafa, …).",
+  width: 400,
+  sections: [
+    { id: "hdr", kind: "header", label: "Header (global)", heading: "Al-Baghdady", buttons: ["Order Online"], items: 6 },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Specialties", "Baklava"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "Topic Hero",
+      accent: "sand",
+      eyebrow: "OUR FLAGSHIP",
+      heading: "Authentic baklava in Richardson, TX",
+      body: 2,
+      buttons: ["View Menu", "ghost:Order Online"],
+    },
+    {
+      id: "primary",
+      kind: "split",
+      label: "Primary content block",
+      heading: "Indulge in 100-year-old Iraqi baklava",
+      body: 4,
+      buttons: ["Order Online"],
+      itemLabel: "DISH",
+      image: true,
+    },
+    {
+      id: "related",
+      kind: "cards",
+      label: "Related menu items",
+      heading: "On the menu",
+      cols: 3,
+      items: 3,
+      itemLabel: "DISH",
+      source: "specialties.ts → relatedMenuItemNames → MENU",
+    },
+    {
+      id: "faq",
+      kind: "faq",
+      label: "Per-topic FAQs",
+      heading: "Baklava FAQs",
+      items: 4,
+      source: "specialties.ts → topic.faqs",
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Order baklava today",
+      buttons: ["Order Online", "gold:Call"],
+    },
+    {
+      id: "loc",
+      kind: "map",
+      label: "OurLocation",
+      heading: "Find us",
+      body: 2,
+      buttons: ["Directions"],
+    },
+    { id: "ftr", kind: "footer", label: "Footer (global)", heading: "Al-Baghdady" },
+  ],
+  notes: [
+    {
+      id: "n-route",
+      anchor: "hero",
+      side: "right",
+      title: "Dynamic route",
+      lines: [
+        { sys: "layout", text: "One file = `/specialties/[topic]/page.tsx`" },
+        { sys: "layout", text: "`generateStaticParams()` reads `SPECIALTIES` (11)" },
+        { sys: "brand", text: "All copy fields come from `specialties.ts`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "left",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "brand", text: "Last crumb = `topic.name`" },
+      ],
+    },
+    {
+      id: "n-hero",
+      anchor: "hero",
+      side: "left",
+      title: "Topic Hero",
+      lines: [
+        { sys: "brand", text: "`heroEyebrow` / `heroHeadline` per topic" },
+        { sys: "color", text: "Eyebrow `--color-primary`, bg `--color-sand`" },
+        { sys: "seo", text: "`createMetadata()` from `metaTitle`/`metaDescription`" },
+        { sys: "seo", text: "`keywords[]` per topic for search" },
+      ],
+    },
+    {
+      id: "n-primary",
+      anchor: "primary",
+      side: "left",
+      title: "Primary block",
+      lines: [
+        { sys: "brand", text: "`primaryBlock.heading` / `primaryBlock.body`" },
+        { sys: "brand", text: "Image = `topic.image` (`/Images/specialties/<slug>.webp`)" },
+        { sys: "color", text: "Heading `--font-accent`, CTA `.btn-primary`" },
+      ],
+    },
+    {
+      id: "n-related",
+      anchor: "related",
+      side: "right",
+      title: "Products = parent → child",
+      lines: [
+        { sys: "product", text: "`topic.relatedMenuItemNames` (string keys)" },
+        { sys: "product", text: "Resolved against `menu.ts` → `MENU`" },
+        { sys: "layout", text: "Edit one item in `MENU` → every topic re-fetches" },
+      ],
+    },
+    {
+      id: "n-faq",
+      anchor: "faq",
+      side: "right",
+      title: "Per-topic FAQs",
+      lines: [
+        { sys: "product", text: "`specialties.ts` → `topic.faqs`" },
+        { sys: "seo", text: "Injects `FAQPage` JSON-LD via `<SchemaInjector>`" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "left",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "`.btn-primary` + `.btn-gold` (`--color-gold`)" },
+        { sys: "brand", text: "Order link = `RESTAURANT.orderOnline`, phone = `RESTAURANT.phone`" },
+      ],
+    },
+    {
+      id: "n-loc",
+      anchor: "loc",
+      side: "right",
+      title: "OurLocation",
+      lines: [
+        { sys: "brand", text: "Shared `RESTAURANT.address` / `geo`" },
+        { sys: "seo", text: "`LocalBusiness` + `openingHours` schema" },
+      ],
+    },
+  ],
+};

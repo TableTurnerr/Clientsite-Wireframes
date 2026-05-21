@@ -1,0 +1,153 @@
+import type { WireframePage } from "@/canvas/types";
+
+// Dynamic SEO template: ONE file renders all 10 city pages.
+export const nearCity: WireframePage = {
+  id: "near-city",
+  title: "City (template)",
+  route: "/near/[city]/",
+  group: "Dynamic SEO Templates",
+  blurb: "Local-SEO landing page. generateStaticParams() pre-renders 1 per city.",
+  width: 400,
+  sections: [
+    { id: "hdr", kind: "header", label: "Header (global)", heading: "Al-Baghdady", buttons: ["Order Online"], items: 6 },
+    {
+      id: "bc",
+      kind: "breadcrumb",
+      label: "BreadcrumbNav",
+      chips: ["Home", "Service Areas", "Plano"],
+    },
+    {
+      id: "hero",
+      kind: "hero",
+      label: "City Hero",
+      accent: "sand",
+      eyebrow: "SERVING PLANO, TX",
+      heading: "Iraqi Bakery & Breakfast for Plano",
+      body: 2,
+      buttons: ["View Menu", "ghost:Order Online"],
+    },
+    {
+      id: "intro",
+      kind: "text",
+      label: "Intro block",
+      heading: "A 12-minute drive from Plano",
+      body: 4,
+    },
+    {
+      id: "dishes",
+      kind: "cards",
+      label: "Popular dishes (per city)",
+      heading: "Plano favorites",
+      cols: 2,
+      items: 4,
+      itemLabel: "DISH",
+      source: "neighborhoods.ts → popularDishes → MENU",
+    },
+    {
+      id: "body",
+      kind: "text",
+      label: "Long body copy",
+      heading: "Catering across Plano",
+      body: 4,
+    },
+    {
+      id: "faq",
+      kind: "faq",
+      label: "Optional city FAQs",
+      heading: "Plano FAQs",
+      items: 4,
+    },
+    {
+      id: "cta",
+      kind: "cta",
+      label: "Conversion band",
+      accent: "primary",
+      heading: "Order from Plano today",
+      buttons: ["Order Online", "gold:Call Us"],
+    },
+    {
+      id: "loc",
+      kind: "map",
+      label: "OurLocation",
+      heading: "Find us",
+      body: 2,
+      buttons: ["Directions"],
+    },
+    { id: "ftr", kind: "footer", label: "Footer (global)", heading: "Al-Baghdady" },
+  ],
+  notes: [
+    {
+      id: "n-route",
+      anchor: "hero",
+      side: "right",
+      title: "Dynamic route",
+      lines: [
+        { sys: "layout", text: "One file = `/near/[city]/page.tsx`" },
+        { sys: "layout", text: "`generateStaticParams()` reads `NEIGHBORHOODS`" },
+        { sys: "brand", text: "All copy fields come from `neighborhoods.ts`" },
+      ],
+    },
+    {
+      id: "n-bc",
+      anchor: "bc",
+      side: "left",
+      title: "BreadcrumbNav",
+      lines: [
+        { sys: "seo", text: "Auto-injects `BreadcrumbList` JSON-LD" },
+        { sys: "brand", text: "Last crumb = `neighborhood.city`" },
+      ],
+    },
+    {
+      id: "n-hero",
+      anchor: "hero",
+      side: "left",
+      title: "City Hero",
+      lines: [
+        { sys: "brand", text: "`heroHeadline` / `heroSubheadline` per city" },
+        { sys: "color", text: "Eyebrow `--color-primary`, bg `--color-sand`" },
+        { sys: "seo", text: "`createMetadata()` from `metaTitle`/`metaDescription`" },
+        { sys: "seo", text: "`keywords[]` per city for local search" },
+      ],
+    },
+    {
+      id: "n-dishes",
+      anchor: "dishes",
+      side: "right",
+      title: "Products = variable",
+      lines: [
+        { sys: "product", text: "`neighborhood.popularDishes` (string keys)" },
+        { sys: "product", text: "Resolved against `menu.ts` → `MENU`" },
+        { sys: "layout", text: "Different cities surface different items" },
+      ],
+    },
+    {
+      id: "n-body",
+      anchor: "body",
+      side: "left",
+      title: "Body copy",
+      lines: [
+        { sys: "brand", text: "`intro` · `body` · `driveTime` fields" },
+      ],
+    },
+    {
+      id: "n-loc",
+      anchor: "loc",
+      side: "right",
+      title: "OurLocation",
+      lines: [
+        { sys: "brand", text: "Shared `RESTAURANT.address` / `geo`" },
+        { sys: "seo", text: "`LocalBusiness` with `areaServed` = city" },
+      ],
+    },
+    {
+      id: "n-cta",
+      anchor: "cta",
+      side: "left",
+      title: "Conversion band",
+      lines: [
+        { sys: "color", text: "`.btn-primary` + `.btn-gold` (`--color-gold`)" },
+        { sys: "brand", text: "Phone = `RESTAURANT.phone`" },
+      ],
+    },
+  ],
+};
