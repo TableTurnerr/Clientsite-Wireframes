@@ -1,11 +1,34 @@
 "use client";
 
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Canvas } from "@/canvas/Canvas";
 import { FrameGroup } from "@/wireframe/FrameGroup";
 import { WIRE_PAGES } from "@/canvas/pages";
-import { PLACEMENTS, LABELS, WORLD } from "@/data/registry";
+import { computeLayout } from "@/data/registry";
+import { ConfigPanel } from "@/config/ConfigPanel";
+import { configStore, applyTheme } from "@/config/store";
 
 const BY_ID = new Map(WIRE_PAGES.map((p) => [p.id, p] as const));
+
+// Applies the live theme as CSS variables on the canvas world. Renders nothing;
+// re-themes without re-rendering the frames.
+function ThemeApplier() {
+  const theme = useSyncExternalStore(
+    configStore.subscribe,
+    configStore.getThemeSnapshot,
+    configStore.getThemeSnapshot
+  );
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+  return null;
+}
 
 function Legend() {
   return (
@@ -40,20 +63,30 @@ function Legend() {
 }
 
 export default function Page() {
+  // Live-measured group heights, keyed by page id. Frames report their height
+  // via onHeight; the layout spaces each cluster row by its tallest frame so
+  // nothing overlaps the row below.
+  const [heights, setHeights] = useState<Record<string, number>>({});
+  const onHeight = useCallback((id: string, h: number) => {
+    setHeights((prev) => (prev[id] === h ? prev : { ...prev, [id]: h }));
+  }, []);
+
+  // Re-render the frames when product / brand data changes. Theme (color/font)
+  // changes are applied as CSS variables only, so they bypass this on purpose.
+  useSyncExternalStore(
+    configStore.subscribe,
+    configStore.getDataSnapshot,
+    configStore.getDataSnapshot
+  );
+
+  const layout = useMemo(() => computeLayout(heights), [heights]);
+  const { placements: PLACEMENTS, labels: LABELS, world: WORLD } = layout;
+
   return (
     <>
-      <div className="tt-brand tt-ui">
-        <span className="pill">
-          <span className="d" />
-          TableTurnerr · Child-Site Wireframes
-        </span>
-        <div className="sub">
-          The real client-site components, rendered with images as wireframe boxes.
-          Each note maps a UI element to the variable that drives it.
-        </div>
-      </div>
-
       <Legend />
+      <ThemeApplier />
+      <ConfigPanel />
 
       <Canvas worldWidth={WORLD.width} worldHeight={WORLD.height}>
         {LABELS.map((l, i) => (
@@ -77,6 +110,7 @@ export default function Page() {
               notes={page.notes}
               x={pl.x}
               y={pl.y}
+              onHeight={onHeight}
             >
               <P />
             </FrameGroup>

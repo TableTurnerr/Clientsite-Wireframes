@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { WfNote } from "@/canvas/types";
 import { Note } from "./Note";
 
@@ -56,6 +56,7 @@ export function FrameGroup({
   notes,
   x,
   y,
+  onHeight,
   children,
 }: {
   id: string;
@@ -64,6 +65,7 @@ export function FrameGroup({
   notes: WfNote[];
   x: number;
   y: number;
+  onHeight?: (id: string, height: number) => void;
   children: React.ReactNode;
 }) {
   const frameW = DESKTOP_W;
@@ -139,6 +141,13 @@ export function FrameGroup({
       window.clearTimeout(t2);
     };
   }, [measure]);
+
+  // Report the measured group height up so the board can space cluster rows
+  // by the tallest frame in each row (prevents tall frames overlapping the
+  // next row).
+  useEffect(() => {
+    onHeight?.(id, groupH);
+  }, [id, groupH, onHeight]);
 
   const leftNotes = notes.filter((n) => n.side === "left");
   const rightNotes = notes.filter((n) => n.side === "right");
