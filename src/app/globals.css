@@ -466,7 +466,12 @@ html, body {
 .tt-brand .pill .d { width: 8px; height: 8px; border-radius: 50%; background: var(--color-gold); }
 .tt-brand .sub { font-size: 12.5px; color: var(--canvas-ink-muted); margin-top: 8px; max-width: 300px; line-height: 1.45; }
 .tt-legend { position: fixed; z-index: 50; right: 18px; top: 18px; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: 14px; box-shadow: var(--shadow-lift); padding: 14px 16px; width: 256px; }
-.tt-legend h4 { font-family: var(--font-accent); font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.tt-legend-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.tt-legend h4 { font-family: var(--font-accent); font-size: 14px; font-weight: 600; margin-bottom: 0; }
+.tt-legend-close { display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border: none; background: none; cursor: pointer; color: var(--color-text-muted); font-size: 18px; line-height: 1; border-radius: 4px; padding: 0; flex-shrink: 0; }
+.tt-legend-close:hover { background: var(--color-sand); color: var(--color-text); }
+.tt-legend-collapsed { position: fixed; z-index: 50; right: 18px; top: 18px; background: rgba(255,255,255,0.94); backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: 20px; box-shadow: var(--shadow-lift); padding: 6px 14px; font-family: var(--font-accent); font-size: 12px; font-weight: 600; color: var(--color-text); cursor: pointer; }
+.tt-legend-collapsed:hover { background: var(--color-sand); }
 .tt-legend .row { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; }
 .tt-legend .row .dot { width: 10px; height: 10px; border-radius: 2px; margin-top: 3px; flex-shrink: 0; }
 .tt-legend .row .lab { font-size: 11.5px; line-height: 1.4; color: var(--color-text-muted); }

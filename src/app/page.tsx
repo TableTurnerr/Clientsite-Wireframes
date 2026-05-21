@@ -31,9 +31,33 @@ function ThemeApplier() {
 }
 
 function Legend() {
+  const [open, setOpen] = useState(true);
+
+  if (!open) {
+    return (
+      <button
+        className="tt-legend-collapsed tt-ui"
+        onClick={() => setOpen(true)}
+        title="Show annotation key"
+      >
+        Annotation key
+      </button>
+    );
+  }
+
   return (
     <div className="tt-legend tt-ui">
-      <h4>Annotation key</h4>
+      <div className="tt-legend-header">
+        <h4>Annotation key</h4>
+        <button
+          className="tt-legend-close"
+          onClick={() => setOpen(false)}
+          title="Close"
+          aria-label="Close annotation key"
+        >
+          ×
+        </button>
+      </div>
       <div className="row">
         <span className="dot" style={{ background: "var(--sys-color)" }} />
         <span className="lab"><b>Color token</b> — design tokens (--color-*, fonts)</span>
