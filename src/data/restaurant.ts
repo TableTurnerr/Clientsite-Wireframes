@@ -1,6 +1,9 @@
 export const RESTAURANT = {
   name: "Al-Baghdady Bakery & Café",
   legalName: "Al-Baghdady Restaurant & Bakery",
+  // Short brand shown in the header/footer logotype. (The small subtitle under
+  // it is composed from servesCuisine, e.g. "Iraqi Restaurant & Bakery".)
+  brandShort: "Al-Baghdady",
   tagline: "Authentic Iraqi Bakery & Breakfast Café in Richardson, TX",
   shortDescription:
     "Family-owned Iraqi bakery and breakfast café in Richardson, TX — serving authentic baklava, kunafa, samoon, ladyfingers, and traditional Iraqi breakfast since 2012, with family recipes dating back to Baghdad, 1919. Halal. Dine-in, takeout, delivery and catering.",
@@ -31,6 +34,13 @@ export const RESTAURANT = {
   priceRange: "$$",
   cuisine: ["Iraqi", "Middle Eastern", "Halal", "Arabic", "Bakery"],
   servesCuisine: "Iraqi",
+  // Brand-term variables — used in copy so the template carries no hardcoded
+  // place/cuisine/heritage strings. Defaults match the current site.
+  stateFull: "Texas",
+  region: "Dallas–Fort Worth",
+  regionShort: "DFW",
+  originCity: "Baghdad",
+  dietary: "Halal",
   paymentAccepted: "Cash, Credit Card",
   currenciesAccepted: "USD",
 
@@ -56,6 +66,8 @@ export const RESTAURANT = {
 
   ratingValue: 4.4,
   reviewCount: 1899,
+
+  instagramHandle: "@albaghdadyrestaurant",
 
   socials: {
     instagram:
@@ -117,6 +129,8 @@ export const RESTAURANT = {
     text: "This hole-in-the-wall bakery in Richardson is a treasure.",
     source: "D Magazine",
   },
-} as const;
+};
 
 export type RestaurantHours = (typeof RESTAURANT.hours)[number];
+// Full mutable shape of the restaurant data — used by the live config store.
+export type RestaurantData = typeof RESTAURANT;
