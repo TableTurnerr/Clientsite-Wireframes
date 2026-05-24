@@ -1,6 +1,11 @@
 import { RESTAURANT } from "@/data/restaurant";
 import { MENU } from "@/data/menu";
 import { COPY } from "@/data/copy";
+import { FAQS } from "@/data/faqs";
+import { REVIEWS } from "@/data/reviews";
+import { SPECIALTIES } from "@/data/specialties";
+import { NEIGHBORHOODS } from "@/data/neighborhoods";
+import { DISHES } from "@/data/dishes";
 import type { BrandPreset, SiteConfig, ThemeColors } from "./types";
 
 // Defaults mirror the @theme tokens in globals.css so "Reset" returns the
@@ -124,11 +129,16 @@ export const CANVAS_SWATCHES: { label: string; value: string }[] = [
 ];
 
 // Capture pristine snapshots at module load — BEFORE the store ever mutates
-// RESTAURANT / MENU in place — so "Reset" always restores the original data
-// rather than whatever the live (already-edited) objects currently hold.
+// the underlying arrays in place — so "Reset" always restores the original
+// data rather than whatever the live (already-edited) objects currently hold.
 const PRISTINE_RESTAURANT = structuredClone(RESTAURANT);
 const PRISTINE_MENU = structuredClone(MENU);
 const PRISTINE_COPY = structuredClone(COPY);
+const PRISTINE_FAQS = structuredClone(FAQS);
+const PRISTINE_REVIEWS = structuredClone(REVIEWS);
+const PRISTINE_SPECIALTIES = structuredClone(SPECIALTIES);
+const PRISTINE_NEIGHBORHOODS = structuredClone(NEIGHBORHOODS);
+const PRISTINE_DISHES = structuredClone(DISHES);
 
 export function makeDefaultConfig(): SiteConfig {
   return {
@@ -143,6 +153,12 @@ export function makeDefaultConfig(): SiteConfig {
       restaurant: structuredClone(PRISTINE_RESTAURANT),
       menu: structuredClone(PRISTINE_MENU),
       copy: structuredClone(PRISTINE_COPY),
+      faqs: structuredClone(PRISTINE_FAQS),
+      reviews: structuredClone(PRISTINE_REVIEWS),
+      specialties: structuredClone(PRISTINE_SPECIALTIES),
+      neighborhoods: structuredClone(PRISTINE_NEIGHBORHOODS),
+      dishes: structuredClone(PRISTINE_DISHES),
+      overrides: {},
     },
   };
 }
