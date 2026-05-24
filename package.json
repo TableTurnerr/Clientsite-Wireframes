@@ -9,6 +9,8 @@
     "serve-out": "npx serve out"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.106.1",
     "lucide-react": "^0.460.0",
     "next": "15.5.16",
     "qrcode.react": "^4.2.0",
