@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Settings2, X, ChevronDown, RotateCcw } from "lucide-react";
 import { configStore } from "./store";
-import { BRAND_PRESETS, CANVAS_SWATCHES, COLOR_FIELDS, FONT_OPTIONS } from "./defaults";
+import { BRAND_PRESETS, COLOR_FIELDS, FONT_OPTIONS } from "./defaults";
 import { COPY_FIELDS } from "@/data/copy";
 import type { ConfigData, ThemeColors } from "./types";
 
@@ -64,7 +64,6 @@ function ConfigPanelImpl() {
   const [resetNonce, setResetNonce] = useState(0);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     colors: true,
-    canvas: false,
     type: false,
     brand: false,
     links: false,
@@ -92,11 +91,6 @@ function ConfigPanelImpl() {
   ) =>
     configStore.updateTheme((t) => {
       t[which] = val;
-    });
-
-  const setCanvas = (val: string) =>
-    configStore.updateTheme((t) => {
-      t.canvasBg = val;
     });
 
   // Debounced content commit, keyed per field so parallel edits never drop.
@@ -222,42 +216,6 @@ function ConfigPanelImpl() {
                 />
               </div>
             ))}
-          </Section>
-
-          {/* ---------------- CANVAS ---------------- */}
-          <Section id="canvas" title="Canvas (board)" open={expanded.canvas} onToggle={toggle}>
-            <div className="cfg-color">
-              <input
-                type="color"
-                className="sw"
-                value={theme.canvasBg}
-                onChange={(e) => setCanvas(e.target.value)}
-                aria-label="Canvas background"
-              />
-              <span className="nm">Canvas background</span>
-              <input
-                type="text"
-                className="hex"
-                value={theme.canvasBg}
-                onChange={(e) => setCanvas(e.target.value)}
-                spellCheck={false}
-              />
-            </div>
-            <div className="cfg-canvas-swatches">
-              {CANVAS_SWATCHES.map((s) => (
-                <button
-                  key={s.value}
-                  type="button"
-                  style={{ background: s.value }}
-                  title={s.label}
-                  onClick={() => setCanvas(s.value)}
-                />
-              ))}
-            </div>
-            <p className="cfg-hint">
-              Text sitting directly on the canvas (cluster titles &amp; the brand
-              caption) auto-lightens when the background is dark.
-            </p>
           </Section>
 
           {/* ---------------- TYPOGRAPHY ---------------- */}

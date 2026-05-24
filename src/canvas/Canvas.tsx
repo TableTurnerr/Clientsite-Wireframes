@@ -5,9 +5,12 @@ import {
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { Minus, Plus, Maximize2, Locate } from "lucide-react";
+import { Minus, Plus, Maximize2, Locate, Palette } from "lucide-react";
+import { configStore } from "@/config/store";
+import { CANVAS_SWATCHES } from "@/config/defaults";
 
 interface View {
   scale: number;
@@ -36,9 +39,18 @@ export function Canvas({
   const viewportRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View>(INITIAL);
   const [dragging, setDragging] = useState(false);
+  const [colorsOpen, setColorsOpen] = useState(false);
   const drag = useRef<{ x: number; y: number; tx: number; ty: number } | null>(
     null
   );
+
+  const theme = useSyncExternalStore(
+    configStore.subscribe,
+    configStore.getThemeSnapshot,
+    configStore.getThemeSnapshot
+  );
+  const setCanvas = (val: string) =>
+    configStore.updateTheme((t) => { t.canvasBg = val; });
 
   const zoomAround = useCallback(
     (px: number, py: number, factor: number) => {
@@ -171,6 +183,42 @@ export function Canvas({
         <button onClick={fitAll} title="Fit all (F)">
           <Maximize2 size={16} />
         </button>
+        <span className="divider" />
+        <button
+          className={`tt-canvas-toggle${colorsOpen ? " open" : ""}`}
+          onClick={() => setColorsOpen((o) => !o)}
+          title="Canvas colour"
+        >
+          <span className="tt-canvas-toggle-swatch" style={{ background: theme.canvasBg }} />
+          <Palette size={12} />
+        </button>
+        {colorsOpen && (
+          <>
+            <span className="divider" />
+            <div className="tt-canvas-dots">
+              {CANVAS_SWATCHES.map((s) => (
+                <button
+                  key={s.value}
+                  className={`tt-canvas-dot${theme.canvasBg === s.value ? " active" : ""}`}
+                  style={{ background: s.value }}
+                  title={`Canvas: ${s.label}`}
+                  onClick={() => setCanvas(s.value)}
+                />
+              ))}
+              <label
+                className="tt-canvas-picker"
+                style={{ background: theme.canvasBg }}
+                title="Custom canvas colour"
+              >
+                <input
+                  type="color"
+                  value={theme.canvasBg}
+                  onChange={(e) => setCanvas(e.target.value)}
+                />
+              </label>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
