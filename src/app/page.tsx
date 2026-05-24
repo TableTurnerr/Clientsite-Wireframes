@@ -13,6 +13,7 @@ import { WIRE_PAGES } from "@/canvas/pages";
 import { computeLayout } from "@/data/registry";
 import { ConfigPanel } from "@/config/ConfigPanel";
 import { configStore, applyTheme } from "@/config/store";
+import { UserChip } from "@/components/auth/UserChip";
 
 const BY_ID = new Map(WIRE_PAGES.map((p) => [p.id, p] as const));
 
@@ -111,6 +112,7 @@ export default function Page() {
       <Legend />
       <ThemeApplier />
       <ConfigPanel />
+      <UserChip />
 
       <Canvas worldWidth={WORLD.width} worldHeight={WORLD.height}>
         {LABELS.map((l, i) => (
