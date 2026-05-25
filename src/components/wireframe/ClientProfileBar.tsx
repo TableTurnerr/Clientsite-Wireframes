@@ -65,11 +65,31 @@ export function ClientProfileBar() {
   activeClientRef.current = activeClientId;
 
   // Load the client list once on mount. The signed-in user's RLS scope
-  // decides which rows come back.
+  // decides which rows come back. First-run seed: if the team has no
+  // visible client profiles at all, auto-create "Al-Baghdady" from the
+  // default config so the wireframe isn't blank on first open.
   useEffect(() => {
     let cancelled = false;
-    listClients()
-      .then((rows) => {
+    (async () => {
+      try {
+        let rows = await listClients();
+        if (cancelled) return;
+        if (rows.length === 0) {
+          try {
+            const { client } = await createClientProfile("Al-Baghdady");
+            rows = [client];
+          } catch (err: unknown) {
+            // A concurrent first-run on another tab may have already created
+            // the row — re-list before surfacing the error so we still pick
+            // something up.
+            const refreshed = await listClients().catch(() => [] as ClientRow[]);
+            if (refreshed.length > 0) {
+              rows = refreshed;
+            } else {
+              throw err;
+            }
+          }
+        }
         if (cancelled) return;
         setClients(rows);
         const remembered =
@@ -80,11 +100,11 @@ export function ClientProfileBar() {
         if (initial) {
           void switchToClient(initial, rows);
         }
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         if (cancelled) return;
         setLoadError(err instanceof Error ? err.message : String(err));
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };
