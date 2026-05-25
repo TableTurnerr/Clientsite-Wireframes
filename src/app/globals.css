@@ -705,6 +705,33 @@ html, body {
 .tt-lock-action-primary:hover { background: var(--color-primary-dark); border-color: var(--color-primary-dark); }
 
 /* ============================================================
+   FORMAT TOOLBAR — floating B / I / U pill, shown on selection
+   ============================================================ */
+.tt-format-toolbar {
+  position: fixed; z-index: 60; left: 50%; bottom: 78px;
+  transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 2px;
+  background: rgba(20, 20, 22, 0.92); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px; padding: 4px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  animation: tt-format-pop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tt-format-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 999px;
+  background: transparent; border: none; cursor: pointer;
+  color: rgba(255, 255, 255, 0.82);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.tt-format-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.tt-format-btn.active { background: #fff; color: #111; }
+@keyframes tt-format-pop {
+  from { opacity: 0; transform: translate(-50%, 6px) scale(0.96); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+/* ============================================================
    CONFIG PANEL — live "site variables" editor
    ============================================================ */
 .cfg-fab {
