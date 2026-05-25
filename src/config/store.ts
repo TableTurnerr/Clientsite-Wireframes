@@ -43,6 +43,37 @@ let state: SiteConfig = makeDefaultConfig();
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
 
+// Walk an in-place data module after assignment and replace any empty leaf
+// (null, undefined, or "") with a labelled placeholder like
+// "{{ RESTAURANT.address.city }}". Lets the wireframe stay self-documenting
+// when a profile is missing copy — readers see what variable drives each spot
+// instead of blank space (or crashes from rendered-as-empty downstream code).
+// Mutates in place so it doesn't change the saved data shape.
+function labelEmpties(value: unknown, path: string): void {
+  if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      const item = value[i];
+      if (item === null || item === undefined || item === "") {
+        value[i] = `{{ ${path}[${i}] }}`;
+      } else if (typeof item === "object") {
+        labelEmpties(item, `${path}[${i}]`);
+      }
+    }
+    return;
+  }
+  if (value && typeof value === "object") {
+    const obj = value as Record<string, unknown>;
+    for (const k of Object.keys(obj)) {
+      const v = obj[k];
+      if (v === null || v === undefined || v === "") {
+        obj[k] = `{{ ${path}.${k} }}`;
+      } else if (typeof v === "object") {
+        labelEmpties(v, `${path}.${k}`);
+      }
+    }
+  }
+}
+
 // Mirror the editable data into the real data-module references *in place* so
 // every real component (which imports those references) renders live values
 // without any component edits.
@@ -55,6 +86,15 @@ function syncDataModules(data: ConfigData) {
   SPECIALTIES.splice(0, SPECIALTIES.length, ...data.specialties);
   NEIGHBORHOODS.splice(0, NEIGHBORHOODS.length, ...data.neighborhoods);
   DISHES.splice(0, DISHES.length, ...data.dishes);
+
+  labelEmpties(RESTAURANT, "RESTAURANT");
+  labelEmpties(COPY, "COPY");
+  labelEmpties(MENU, "MENU");
+  labelEmpties(FAQS, "FAQS");
+  labelEmpties(REVIEWS, "REVIEWS");
+  labelEmpties(SPECIALTIES, "SPECIALTIES");
+  labelEmpties(NEIGHBORHOODS, "NEIGHBORHOODS");
+  labelEmpties(DISHES, "DISHES");
 }
 
 // Apply theme tokens as CSS variables on the canvas world so only the frames

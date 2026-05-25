@@ -8,11 +8,14 @@ import {
 // Thin typed wrapper around the wireframe_* tables. Centralises shape coercion
 // so callers can stay framework-agnostic and avoid sprinkling `as unknown as` casts.
 
+export type ClientStatus = "prospect" | "client" | "template";
+
 export interface ClientRow {
   id: string;
   name: string;
   slug: string;
   url: string | null;
+  status: ClientStatus;
   updated_at: string;
 }
 
@@ -24,16 +27,45 @@ export interface WireframeContentRow {
   updated_by: string | null;
 }
 
-// List every client visible to the signed-in team member. RLS on public.clients
-// (defined in the parent repo) restricts this to rows the user has access to.
+// List the profiles the wireframe should surface in its picker. Prospects are
+// intentionally hidden here — they live in the parent admin site until they're
+// promoted to a client. Templates are surfaced so users can edit the default
+// template that seeds new profiles.
 export async function listClients(): Promise<ClientRow[]> {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("clients")
-    .select("id, name, slug, url, updated_at")
+    .select("id, name, slug, url, status, updated_at")
+    .in("status", ["client", "template"])
     .order("name", { ascending: true });
   if (error) throw error;
   return (data ?? []) as ClientRow[];
+}
+
+// List prospects so the "Add new profile" dialog can offer to promote them.
+// Returns rows with status='prospect' only.
+export async function listProspects(): Promise<ClientRow[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("clients")
+    .select("id, name, slug, url, status, updated_at")
+    .eq("status", "prospect")
+    .order("name", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as ClientRow[];
+}
+
+// Flip a prospect to client status. Returns the updated row.
+export async function promoteProspectToClient(clientId: string): Promise<ClientRow> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("clients")
+    .update({ status: "client" })
+    .eq("id", clientId)
+    .select("id, name, slug, url, status, updated_at")
+    .single();
+  if (error) throw error;
+  return data as ClientRow;
 }
 
 // Fetch the JSONB content blob for a client. Returns null if the row hasn't
@@ -93,7 +125,7 @@ function toSlug(name: string): string {
 // still exists and will lazy-seed on first save instead.
 export async function createClientProfile(
   name: string,
-  options: { slug?: string; url?: string | null } = {},
+  options: { slug?: string; url?: string | null; status?: ClientStatus } = {},
 ): Promise<{ client: ClientRow; content: SerializedState }> {
   const supabase = createClient();
   const slug = options.slug ?? toSlug(name);
@@ -102,6 +134,10 @@ export async function createClientProfile(
   const { data: userRes } = await supabase.auth.getUser();
   const createdBy = userRes.user?.id ?? null;
 
+  // Profiles created from the wireframe are real signed clients by default;
+  // prospect onboarding happens in the parent admin site.
+  const status: ClientStatus = options.status ?? "client";
+
   const { data: clientData, error: clientErr } = await supabase
     .from("clients")
     .insert({
@@ -109,8 +145,9 @@ export async function createClientProfile(
       slug,
       url: options.url ?? "",
       created_by: createdBy,
+      status,
     })
-    .select("id, name, slug, url, updated_at")
+    .select("id, name, slug, url, status, updated_at")
     .single();
   if (clientErr) throw clientErr;
   const client = clientData as ClientRow;
