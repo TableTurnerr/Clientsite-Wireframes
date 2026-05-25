@@ -15,6 +15,7 @@ import { ConfigPanel } from "@/config/ConfigPanel";
 import { configStore, applyTheme } from "@/config/store";
 import { UserChip } from "@/components/auth/UserChip";
 import { ClientProfileBar } from "@/components/wireframe/ClientProfileBar";
+import { EditLockBar } from "@/components/wireframe/EditLockBar";
 
 const BY_ID = new Map(WIRE_PAGES.map((p) => [p.id, p] as const));
 
@@ -115,6 +116,7 @@ export default function Page() {
       <ConfigPanel />
       <UserChip />
       <ClientProfileBar />
+      <EditLockBar />
 
       <Canvas worldWidth={WORLD.width} worldHeight={WORLD.height}>
         {LABELS.map((l, i) => (

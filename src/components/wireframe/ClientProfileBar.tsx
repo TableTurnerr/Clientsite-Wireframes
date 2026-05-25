@@ -17,6 +17,7 @@ import {
   saveWireframeContent,
   type ClientRow,
 } from "@/lib/wireframe/content-api";
+import { editLockStore } from "@/lib/wireframe/edit-lock-store";
 
 const LAST_CLIENT_KEY = "tt-wf-active-client";
 const AUTOSAVE_DEBOUNCE_MS = 1500;
@@ -124,6 +125,9 @@ export function ClientProfileBar() {
         if (list && !list.some((c) => c.id === clientId)) {
           setClients(list);
         }
+        // Re-bind the edit lock to the newly active client. The lock store
+        // handles releasing any previous client's lock internally.
+        void editLockStore.setActiveClient(clientId);
       } catch (err: unknown) {
         setSaveStatus({
           kind: "error",
@@ -139,11 +143,18 @@ export function ClientProfileBar() {
     [],
   );
 
-  // Autosave on data changes, debounced. Skipped while no client is selected
-  // or right after a load.
+  // Autosave on data changes, debounced. Skipped while no client is selected,
+  // right after a load, or when this user doesn't hold the edit lock — the
+  // server would reject the write anyway and we'd flash a misleading error.
+  const lockState = useSyncExternalStore(
+    editLockStore.subscribe,
+    editLockStore.getSnapshot,
+    editLockStore.getSnapshot,
+  );
   useEffect(() => {
     if (!activeClientId) return;
     if (suppressSaveRef.current) return;
+    if (lockState.status !== "holding") return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     setSaveStatus((prev) =>
       prev.kind === "error" ? prev : { kind: "saving" },
@@ -167,7 +178,7 @@ export function ClientProfileBar() {
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     };
-  }, [data, activeClientId]);
+  }, [data, activeClientId, lockState.status]);
 
   const handleNewProfile = useCallback(async () => {
     const name = window.prompt(
