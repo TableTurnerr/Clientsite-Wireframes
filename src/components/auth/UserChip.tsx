@@ -10,7 +10,6 @@ interface UserInfo {
 
 export function UserChip() {
   const [user, setUser] = useState<UserInfo | null>(null);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -51,7 +50,6 @@ export function UserChip() {
       <button
         type="button"
         className="tt-user-chip-trigger"
-        onClick={() => setOpen((v) => !v)}
         aria-label={user.email}
       >
         {user.avatarUrl ? (
@@ -62,27 +60,23 @@ export function UserChip() {
             {initial}
           </span>
         )}
-        <span className="tt-user-chip-tooltip" role="tooltip">
-          {user.email}
-        </span>
       </button>
 
-      {open && (
-        <div className="tt-user-chip-menu" role="menu">
-          {adminUrl && (
-            <a href={adminUrl} className="tt-user-chip-menu-item">
-              ← Admin panel
-            </a>
-          )}
-          <button
-            type="button"
-            className="tt-user-chip-menu-item"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </button>
-        </div>
-      )}
+      <div className="tt-user-chip-menu" role="menu">
+        <div className="tt-user-chip-menu-email">{user.email}</div>
+        {adminUrl && (
+          <a href={adminUrl} className="tt-user-chip-menu-item">
+            ← Admin panel
+          </a>
+        )}
+        <button
+          type="button"
+          className="tt-user-chip-menu-item"
+          onClick={handleSignOut}
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
