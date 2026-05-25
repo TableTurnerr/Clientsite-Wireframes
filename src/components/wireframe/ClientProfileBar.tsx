@@ -18,6 +18,7 @@ import {
   type ClientRow,
 } from "@/lib/wireframe/content-api";
 import { editLockStore } from "@/lib/wireframe/edit-lock-store";
+import { NewProfileDialog } from "./NewProfileDialog";
 
 const LAST_CLIENT_KEY = "tt-wf-active-client";
 const AUTOSAVE_DEBOUNCE_MS = 1500;
@@ -27,6 +28,25 @@ type SaveStatus =
   | { kind: "saving" }
   | { kind: "saved"; at: number }
   | { kind: "error"; message: string };
+
+// Supabase's PostgrestError isn't an Error instance, so the obvious
+// `err.message ?? String(err)` would render "[object Object]". Pull the
+// message/details fields the SDK actually returns; fall back gracefully.
+function formatError(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (err && typeof err === "object") {
+    const e = err as { message?: unknown; details?: unknown; hint?: unknown; code?: unknown };
+    const parts = [e.message, e.details, e.hint, e.code]
+      .filter((v): v is string => typeof v === "string" && v.length > 0);
+    if (parts.length > 0) return parts.join(" — ");
+    try {
+      return JSON.stringify(err);
+    } catch {
+      return String(err);
+    }
+  }
+  return String(err);
+}
 
 function formatAgo(ts: number, now: number): string {
   const s = Math.max(0, Math.round((now - ts) / 1000));
@@ -46,7 +66,7 @@ export function ClientProfileBar() {
   const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ kind: "idle" });
   const [now, setNow] = useState<number>(() => Date.now());
 
@@ -102,7 +122,7 @@ export function ClientProfileBar() {
         }
       } catch (err: unknown) {
         if (cancelled) return;
-        setLoadError(err instanceof Error ? err.message : String(err));
+        setLoadError(formatError(err));
       }
     })();
     return () => {
@@ -200,31 +220,24 @@ export function ClientProfileBar() {
     };
   }, [data, activeClientId, lockState.status]);
 
-  const handleNewProfile = useCallback(async () => {
-    const name = window.prompt(
-      "Profile name (e.g. restaurant name)",
-      "",
-    )?.trim();
-    if (!name) return;
-    setCreating(true);
-    setOpen(false);
-    try {
-      const { client } = await createClientProfile(name);
+  const handleDialogCreated = useCallback(
+    async (client: ClientRow) => {
       setClients((prev) => {
+        if (prev.some((c) => c.id === client.id)) return prev;
         const next = [...prev, client];
         next.sort((a, b) => a.name.localeCompare(b.name));
         return next;
       });
+      setDialogOpen(false);
       await switchToClient(client.id);
-    } catch (err: unknown) {
-      window.alert(
-        "Could not create profile: " +
-          (err instanceof Error ? err.message : String(err)),
-      );
-    } finally {
-      setCreating(false);
-    }
-  }, [switchToClient]);
+    },
+    [switchToClient],
+  );
+
+  const openNewProfileDialog = useCallback(() => {
+    setOpen(false);
+    setDialogOpen(true);
+  }, []);
 
   const activeClient = useMemo(
     () => clients.find((c) => c.id === activeClientId) ?? null,
@@ -247,7 +260,6 @@ export function ClientProfileBar() {
           type="button"
           className="tt-profile-bar-trigger"
           onClick={() => setOpen((v) => !v)}
-          disabled={creating}
         >
           <span className="tt-profile-bar-label">Profile</span>
           <span className="tt-profile-bar-name">
@@ -281,17 +293,22 @@ export function ClientProfileBar() {
             <button
               type="button"
               className="tt-profile-bar-item tt-profile-bar-new"
-              onClick={handleNewProfile}
-              disabled={creating}
+              onClick={openNewProfileDialog}
             >
               <Plus size={14} />
-              <span>{creating ? "Creating…" : "New profile"}</span>
+              <span>New profile…</span>
             </button>
           </div>
         )}
       </div>
 
       <SaveIndicator status={saveStatus} now={now} />
+
+      <NewProfileDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onCreated={handleDialogCreated}
+      />
     </div>
   );
 }
