@@ -442,6 +442,19 @@ html, body {
 .wf-pagetag { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-primary); background: #fff; border: 1px solid var(--color-border); border-radius: 6px; padding: 4px 9px; }
 .wf-page { position: relative; }
 
+/* Editable host inside each frame. When the local user holds the edit lock,
+   .wf-editable-host gets contentEditable=true; we hint that visually with a
+   text caret cursor and a subtle ring on focus. Canvas pan ignores
+   pointerdowns landing on .wf-editable-host so the browser can place a caret. */
+.wf-editable { outline: none; }
+.wf-editable-host { cursor: text; }
+.wf-editable-host:focus-within {
+  box-shadow: inset 0 0 0 1px rgba(139, 26, 26, 0.18);
+}
+.wf-editable-host [data-anchor]:hover {
+  background: rgba(139, 26, 26, 0.03);
+}
+
 /* note cards */
 .note { background: #fff; border: 1px solid var(--color-border); border-left: 3px solid var(--note-accent, var(--sys-layout)); border-radius: 11px; box-shadow: var(--shadow-soft); padding: 11px 13px; width: 100%; user-select: text; }
 .note-title { font-family: var(--font-accent); font-size: 14px; font-weight: 600; color: var(--color-text); letter-spacing: -0.01em; margin-bottom: 8px; }

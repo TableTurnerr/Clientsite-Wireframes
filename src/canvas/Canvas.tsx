@@ -88,7 +88,13 @@ export function Canvas({
 
   const onPointerDown = (e: React.PointerEvent) => {
     // ignore drags that start on the fixed UI
-    if ((e.target as HTMLElement).closest(".tt-ui")) return;
+    const tgt = e.target as HTMLElement;
+    if (tgt.closest(".tt-ui")) return;
+    // …or on a contentEditable frame (so the browser can place a text caret
+    // instead of starting a pan). The closest() walk handles clicks on inner
+    // text nodes; we look for the wf-editable-host marker class set by
+    // EditableFrame when the user holds the edit lock.
+    if (tgt.closest(".wf-editable-host")) return;
     drag.current = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty };
     setDragging(true);
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -192,33 +198,36 @@ export function Canvas({
           <span className="tt-canvas-toggle-swatch" style={{ background: theme.canvasBg }} />
           <Palette size={12} />
         </button>
-        {colorsOpen && (
-          <>
-            <span className="divider" />
-            <div className="tt-canvas-dots">
-              {CANVAS_SWATCHES.map((s) => (
-                <button
-                  key={s.value}
-                  className={`tt-canvas-dot${theme.canvasBg === s.value ? " active" : ""}`}
-                  style={{ background: s.value }}
-                  title={`Canvas: ${s.label}`}
-                  onClick={() => setCanvas(s.value)}
-                />
-              ))}
-              <label
-                className="tt-canvas-picker"
-                style={{ background: theme.canvasBg }}
-                title="Custom canvas colour"
-              >
-                <input
-                  type="color"
-                  value={theme.canvasBg}
-                  onChange={(e) => setCanvas(e.target.value)}
-                />
-              </label>
-            </div>
-          </>
-        )}
+        <div
+          className={`tt-canvas-dots-wrap${colorsOpen ? " open" : ""}`}
+          aria-hidden={!colorsOpen}
+        >
+          <span className="divider" />
+          <div className="tt-canvas-dots">
+            {CANVAS_SWATCHES.map((s) => (
+              <button
+                key={s.value}
+                className={`tt-canvas-dot${theme.canvasBg === s.value ? " active" : ""}`}
+                style={{ background: s.value }}
+                title={`Canvas: ${s.label}`}
+                onClick={() => setCanvas(s.value)}
+                tabIndex={colorsOpen ? 0 : -1}
+              />
+            ))}
+            <label
+              className="tt-canvas-picker"
+              style={{ background: theme.canvasBg }}
+              title="Custom canvas colour"
+            >
+              <input
+                type="color"
+                value={theme.canvasBg}
+                onChange={(e) => setCanvas(e.target.value)}
+                tabIndex={colorsOpen ? 0 : -1}
+              />
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   );

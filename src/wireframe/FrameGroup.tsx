@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { WfNote } from "@/canvas/types";
 import { Note } from "./Note";
+import { EditableFrame } from "./EditableFrame";
 
 const NOTE_W = 248;
 const GAP = 120;
@@ -179,7 +180,9 @@ export function FrameGroup({
             <div className="wf-url">al-baghdady.com{route}</div>
             <div className="wf-pagetag">{title}</div>
           </div>
-          <div className="wf-page">{children}</div>
+          <div className="wf-page">
+            <EditableFrame frameId={id}>{children}</EditableFrame>
+          </div>
         </div>
       </div>
 
