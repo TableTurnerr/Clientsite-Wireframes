@@ -18,6 +18,7 @@ import { ClientProfileBar } from "@/components/wireframe/ClientProfileBar";
 import { ConnectAIPanel } from "@/components/wireframe/ConnectAIPanel";
 import { EditLockBar } from "@/components/wireframe/EditLockBar";
 import { FormatToolbar } from "@/components/wireframe/FormatToolbar";
+import { FrameActionsBar } from "@/components/wireframe/FrameActionsBar";
 
 const BY_ID = new Map(WIRE_PAGES.map((p) => [p.id, p] as const));
 
@@ -123,6 +124,7 @@ export default function Page() {
       <ClientProfileBar />
       <EditLockBar />
       <FormatToolbar />
+      <FrameActionsBar />
 
       <Canvas worldWidth={WORLD.width} worldHeight={WORLD.height}>
         {LABELS.map((l, i) => (

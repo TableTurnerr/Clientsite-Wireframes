@@ -1,9 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import type { WfNote } from "@/canvas/types";
 import { Note } from "./Note";
 import { EditableFrame } from "./EditableFrame";
+import { frameSelectionStore } from "@/lib/wireframe/frame-selection";
 
 const NOTE_W = 248;
 const GAP = 120;
@@ -153,6 +161,25 @@ export function FrameGroup({
   const leftNotes = notes.filter((n) => n.side === "left");
   const rightNotes = notes.filter((n) => n.side === "right");
 
+  const selectedId = useSyncExternalStore(
+    frameSelectionStore.subscribe,
+    frameSelectionStore.getSnapshot,
+    frameSelectionStore.getSnapshot,
+  );
+  const isSelected = selectedId === id;
+
+  // Selecting a frame happens via a click on its chrome bar (title row above
+  // the page). Stop propagation so the click doesn't reach the Canvas
+  // pointer-down handler and start a pan-drag.
+  const onChromePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
+  };
+  const onChromeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isSelected) frameSelectionStore.clear();
+    else frameSelectionStore.select(id);
+  };
+
   return (
     <div className="frame-group" ref={groupRef} style={{ left: x, top: y, width: groupW, height: groupH }} data-frame={id}>
       <svg className="leader-svg" width={groupW} height={groupH}>
@@ -174,8 +201,19 @@ export function FrameGroup({
       </div>
 
       <div className="wf-frame-wrap" style={{ left: frameLeft, width: frameW }}>
-        <div className="wf-frame" style={{ width: frameW }}>
-          <div className="wf-chrome">
+        <div
+          className={`wf-frame${isSelected ? " wf-frame-selected" : ""}`}
+          style={{ width: frameW }}
+        >
+          <div
+            className="wf-chrome"
+            onPointerDown={onChromePointerDown}
+            onClick={onChromeClick}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
+            title={isSelected ? "Click to deselect frame" : "Click to select frame"}
+          >
             <div className="wf-dots"><i /><i /><i /></div>
             <div className="wf-url">al-baghdady.com{route}</div>
             <div className="wf-pagetag">{title}</div>

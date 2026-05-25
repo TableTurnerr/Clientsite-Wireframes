@@ -434,8 +434,11 @@ html, body {
 
 /* the frame that holds a real page */
 .wf-frame-wrap { position: absolute; top: 0; z-index: 2; }
-.wf-frame { background: #fff; border: 1px solid var(--color-border); border-radius: 16px; box-shadow: var(--shadow-lift); overflow: hidden; }
-.wf-chrome { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #f4efe6; border-bottom: 1px solid var(--color-border); }
+.wf-frame { background: #fff; border: 1px solid var(--color-border); border-radius: 16px; box-shadow: var(--shadow-lift); overflow: hidden; transition: box-shadow 0.18s ease, outline-color 0.18s ease; outline: 2px solid transparent; outline-offset: 4px; }
+.wf-frame-selected { outline-color: var(--color-primary); box-shadow: var(--shadow-lift), 0 0 0 1px var(--color-primary); }
+.wf-chrome { display: flex; align-items: center; gap: 9px; padding: 11px 14px; background: #f4efe6; border-bottom: 1px solid var(--color-border); cursor: pointer; user-select: none; transition: background 0.15s ease; }
+.wf-chrome:hover { background: #eee4d2; }
+.wf-frame-selected .wf-chrome { background: rgba(139, 26, 26, 0.08); }
 .wf-dots { display: flex; gap: 6px; }
 .wf-dots i { width: 11px; height: 11px; border-radius: 50%; background: #d9cdb8; display: block; }
 .wf-url { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--color-text-muted); background: #fff; border: 1px solid var(--color-border); border-radius: 999px; padding: 4px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -659,6 +662,177 @@ html, body {
 }
 .tt-spin { animation: tt-spin 1s linear infinite; }
 @keyframes tt-spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   FRAME ACTIONS BAR — appears at top-center when a frame is
+   selected (click its chrome). Offers Copy JSON / Ask AI.
+   ============================================================ */
+.tt-frame-actions {
+  position: fixed; z-index: 55;
+  left: 50%; top: 62px;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(10px);
+  border: 1px solid var(--color-border); border-radius: 999px;
+  padding: 5px 6px 5px 14px;
+  box-shadow: var(--shadow-lift);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  animation: tt-legend-collapse-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tt-frame-actions-label {
+  display: flex; align-items: baseline; gap: 6px;
+  padding-right: 4px;
+}
+.tt-frame-actions-kicker {
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--color-text-muted); font-weight: 600;
+}
+.tt-frame-actions-name {
+  font-size: 13px; font-weight: 600; color: var(--color-text);
+  max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tt-frame-actions-divider {
+  width: 1px; height: 20px; background: var(--color-border);
+  margin: 0 2px;
+}
+.tt-frame-actions-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12.5px; font-weight: 500; color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.tt-frame-actions-btn:hover { background: var(--color-sand); }
+.tt-frame-actions-btn-primary {
+  background: var(--color-text); color: #fff;
+}
+.tt-frame-actions-btn-primary:hover { background: #000; }
+.tt-frame-actions-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent;
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--color-text-muted);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.tt-frame-actions-close:hover { background: var(--color-sand); color: var(--color-text); }
+
+/* ============================================================
+   NEW PROFILE DIALOG — prospect promotion + new-client form
+   ============================================================ */
+.tt-new-profile-backdrop {
+  position: fixed; inset: 0; z-index: 80;
+  background: rgba(17, 17, 16, 0.42);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  animation: tt-new-profile-fade 0.18s ease;
+}
+@keyframes tt-new-profile-fade { from { opacity: 0; } to { opacity: 1; } }
+.tt-new-profile-dialog {
+  width: 100%; max-width: 520px;
+  background: #fff; border: 1px solid var(--color-border); border-radius: 16px;
+  box-shadow: var(--shadow-lift);
+  display: flex; flex-direction: column; gap: 16px;
+  padding: 22px;
+  max-height: calc(100vh - 48px); overflow-y: auto;
+  animation: tt-new-profile-pop 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes tt-new-profile-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.tt-new-profile-header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.tt-new-profile-header h2 {
+  margin: 0; font-size: 16px; font-weight: 700; color: var(--color-text);
+}
+.tt-new-profile-header p {
+  margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: var(--color-text-muted);
+}
+.tt-new-profile-close {
+  background: transparent; border: none; cursor: pointer;
+  color: var(--color-text-muted); padding: 4px; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.tt-new-profile-close:hover { background: var(--color-sand); color: var(--color-text); }
+.tt-new-profile-error {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px; border-radius: 10px;
+  background: rgba(255, 235, 230, 0.95);
+  border: 1px solid rgba(177, 51, 31, 0.4);
+  color: #b1331f; font-size: 12px;
+}
+.tt-new-profile-section {
+  display: flex; flex-direction: column; gap: 8px;
+  padding-top: 12px; border-top: 1px solid var(--color-border);
+}
+.tt-new-profile-section:first-of-type { border-top: none; padding-top: 0; }
+.tt-new-profile-section h3 {
+  margin: 0; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--color-text-muted); font-weight: 700;
+}
+.tt-new-profile-hint {
+  margin: 0; font-size: 12px; line-height: 1.45; color: var(--color-text-muted);
+}
+.tt-new-profile-loading {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--color-text-muted); padding: 8px 2px;
+}
+.tt-new-profile-empty {
+  margin: 0; padding: 10px 12px; border-radius: 10px;
+  font-size: 12px; line-height: 1.45;
+  background: var(--color-sand); color: var(--color-text-muted);
+}
+.tt-new-profile-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 4px;
+  max-height: 240px; overflow-y: auto;
+}
+.tt-new-profile-list li {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 10px;
+  background: #fff;
+}
+.tt-new-profile-list-text { display: flex; flex-direction: column; min-width: 0; }
+.tt-new-profile-list-name {
+  font-size: 13px; font-weight: 600; color: var(--color-text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tt-new-profile-list-url {
+  font-size: 11px; color: var(--color-text-muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 280px;
+}
+.tt-new-profile-promote,
+.tt-new-profile-form button[type="submit"] {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 12px; font-weight: 600;
+  background: var(--color-primary); color: #fff;
+  border: 1px solid var(--color-primary);
+  cursor: pointer; white-space: nowrap;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+.tt-new-profile-promote:hover:not(:disabled),
+.tt-new-profile-form button[type="submit"]:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+.tt-new-profile-promote:disabled,
+.tt-new-profile-form button[type="submit"]:disabled { opacity: 0.6; cursor: default; }
+.tt-new-profile-form {
+  display: flex; gap: 8px; align-items: stretch;
+}
+.tt-new-profile-form input {
+  flex: 1; min-width: 0;
+  padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 10px;
+  font: inherit; font-size: 13px; color: var(--color-text); background: #fff;
+}
+.tt-new-profile-form input:focus {
+  outline: none; border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.15);
+}
 
 /* ============================================================
    EDIT LOCK PILL — top-bar single-user edit indicator

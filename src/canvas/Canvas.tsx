@@ -11,6 +11,7 @@ import {
 import { Minus, Plus, Maximize2, Locate, Palette } from "lucide-react";
 import { configStore } from "@/config/store";
 import { CANVAS_SWATCHES } from "@/config/defaults";
+import { frameSelectionStore } from "@/lib/wireframe/frame-selection";
 
 interface View {
   scale: number;
@@ -40,9 +41,14 @@ export function Canvas({
   const [view, setView] = useState<View>(INITIAL);
   const [dragging, setDragging] = useState(false);
   const [colorsOpen, setColorsOpen] = useState(false);
-  const drag = useRef<{ x: number; y: number; tx: number; ty: number } | null>(
-    null
-  );
+  const drag = useRef<{
+    x: number;
+    y: number;
+    tx: number;
+    ty: number;
+    onEmpty: boolean;
+    moved: boolean;
+  } | null>(null);
 
   const theme = useSyncExternalStore(
     configStore.subscribe,
@@ -95,7 +101,18 @@ export function Canvas({
     // text nodes; we look for the wf-editable-host marker class set by
     // EditableFrame when the user holds the edit lock.
     if (tgt.closest(".wf-editable-host")) return;
-    drag.current = { x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty };
+    // Track whether the pointerdown landed on a frame; if it didn't and the
+    // user releases without dragging, treat it as a click on empty canvas and
+    // clear any frame selection.
+    const onEmpty = !tgt.closest(".frame-group");
+    drag.current = {
+      x: e.clientX,
+      y: e.clientY,
+      tx: view.tx,
+      ty: view.ty,
+      onEmpty,
+      moved: false,
+    };
     setDragging(true);
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
@@ -104,11 +121,16 @@ export function Canvas({
     if (!d) return;
     // Capture deltas now — don't read the ref inside the async state updater,
     // since pointerup may null it before React runs the reducer.
-    const nx = d.tx + (e.clientX - d.x);
-    const ny = d.ty + (e.clientY - d.y);
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) > 4) d.moved = true;
+    const nx = d.tx + dx;
+    const ny = d.ty + dy;
     setView((v) => ({ ...v, tx: nx, ty: ny }));
   };
   const endDrag = () => {
+    const d = drag.current;
+    if (d && d.onEmpty && !d.moved) frameSelectionStore.clear();
     drag.current = null;
     setDragging(false);
   };
