@@ -20,6 +20,7 @@ export default function Footer() {
   ];
   return (
     <footer
+      data-shared-chrome="footer"
       className="w-full px-[10px] md:px-[50px] lg:px-[70px] pt-12 md:pt-16 pb-[20px] sm:pb-[10px] mt-12"
       style={{ background: "var(--color-text)", color: "rgba(255,255,255,0.78)" }}
     >

@@ -30,6 +30,7 @@ export default function Header() {
 
   return (
     <header
+      data-shared-chrome="header"
       className={`sticky top-0 z-50 bg-white/85 backdrop-blur-md transition-all duration-300 ${
         scrolled ? "border-b border-[var(--color-border)] shadow-[0_1px_0_rgba(26,20,16,0.04)]" : "border-b border-transparent"
       }`}

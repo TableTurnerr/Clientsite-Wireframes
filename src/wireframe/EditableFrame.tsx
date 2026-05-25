@@ -14,7 +14,10 @@ import {
   buildDataIndex,
   decideTier,
   diffFrames,
+  nodePathOf,
+  resolveNodePath,
   setDataPath,
+  sharedOverrideKey,
 } from "@/lib/wireframe/inline-edit";
 
 // Wraps a page's rendered content in an editable host. When the local user
@@ -62,6 +65,18 @@ export function EditableFrame({
     if (overridesForFrame && Object.keys(overridesForFrame).length > 0) {
       applyOverridesToDom(host, overridesForFrame);
     }
+    // Apply shared-chrome overrides (header/footer) — these live in their own
+    // bucket so a single edit propagates to every frame that renders the same
+    // chrome. Paths are stored relative to the chrome root, so we scope the
+    // application to each chrome element found in this frame.
+    host.querySelectorAll<HTMLElement>("[data-shared-chrome]").forEach((chromeEl) => {
+      const kind = chromeEl.dataset.sharedChrome;
+      if (!kind) return;
+      const sharedOverrides = dataSnapshot.overrides[sharedOverrideKey(kind)];
+      if (sharedOverrides && Object.keys(sharedOverrides).length > 0) {
+        applyOverridesToDom(chromeEl, sharedOverrides);
+      }
+    });
   });
 
   // Capture a snapshot when focus enters; diff + commit when focus leaves.
@@ -104,6 +119,24 @@ export function EditableFrame({
               }
             }
           } else if (decision.kind === "override") {
+            // If the edited node lives inside a shared chrome element (header
+            // or footer), store the override in the shared bucket so every
+            // frame that renders the same chrome reflects the change.
+            const el = resolveNodePath(host, diff.path);
+            const chromeEl =
+              el instanceof Element
+                ? (el.closest("[data-shared-chrome]") as HTMLElement | null)
+                : null;
+            if (chromeEl && el) {
+              const kind = chromeEl.dataset.sharedChrome;
+              const relPath = nodePathOf(el, chromeEl);
+              if (kind && relPath !== null) {
+                const key = sharedOverrideKey(kind);
+                const bucket = (d.overrides[key] ??= {});
+                bucket[relPath] = decision.html;
+                continue;
+              }
+            }
             const overrides = (d.overrides[frameId] ??= {});
             overrides[diff.path] = decision.html;
           }

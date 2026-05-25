@@ -15,6 +15,13 @@ import type { ConfigData } from "@/config/types";
 // the page doesn't change.
 // ------------------------------------------------------------------
 
+// Override-bucket key for a shared chrome region (header/footer). Stored on
+// the same `overrides` map as per-frame buckets but namespaced so they don't
+// collide with any real frame id and are easy to look up from EditableFrame.
+export function sharedOverrideKey(kind: string): string {
+  return `__shared:${kind}`;
+}
+
 // CSS selector for the editable element relative to its frame root.
 export function nodePathOf(el: Element, root: Element): string | null {
   if (el === root) return "";
