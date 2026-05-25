@@ -52,7 +52,7 @@ export function UserChip() {
         type="button"
         className="tt-user-chip-trigger"
         onClick={() => setOpen((v) => !v)}
-        title={user.email}
+        aria-label={user.email}
       >
         {user.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -62,7 +62,9 @@ export function UserChip() {
             {initial}
           </span>
         )}
-        <span className="tt-user-chip-email">{user.email}</span>
+        <span className="tt-user-chip-tooltip" role="tooltip">
+          {user.email}
+        </span>
       </button>
 
       {open && (
