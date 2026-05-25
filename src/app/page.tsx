@@ -15,6 +15,7 @@ import { ConfigPanel } from "@/config/ConfigPanel";
 import { configStore, applyTheme } from "@/config/store";
 import { UserChip } from "@/components/auth/UserChip";
 import { ClientProfileBar } from "@/components/wireframe/ClientProfileBar";
+import { ConnectAIPanel } from "@/components/wireframe/ConnectAIPanel";
 import { EditLockBar } from "@/components/wireframe/EditLockBar";
 import { FormatToolbar } from "@/components/wireframe/FormatToolbar";
 
@@ -112,7 +113,10 @@ export default function Page() {
 
   return (
     <>
-      <Legend />
+      <div className="tt-right-panel-stack tt-ui">
+        <Legend />
+        <ConnectAIPanel />
+      </div>
       <ThemeApplier />
       <ConfigPanel />
       <UserChip />
