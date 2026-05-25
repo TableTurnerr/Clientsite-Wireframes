@@ -9,6 +9,13 @@ import { withSharedDomain } from "./cookie-options";
  * reach so they're returned here after signing in.
  */
 export async function updateSession(request: NextRequest) {
+  // The MCP endpoint authenticates with its own Bearer-token scheme
+  // (see src/app/api/mcp/route.ts) and must not be bounced to the central
+  // auth host — AI clients don't carry a Supabase session cookie.
+  if (request.nextUrl.pathname.startsWith("/api/mcp")) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

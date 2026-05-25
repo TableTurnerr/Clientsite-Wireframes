@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // The MCP SDK + handler are CJS with dynamic requires (redis adapter). Bundling
+  // them produces "Cannot find module './NNN.js'" at prerender time. Marking
+  // them external makes Next require() them at runtime instead.
+  serverExternalPackages: ["mcp-handler", "@modelcontextprotocol/sdk", "redis"],
 };
 
 export default nextConfig;
