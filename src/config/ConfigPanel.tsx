@@ -2,22 +2,41 @@
 
 import {
   memo,
-  useRef,
+  useEffect,
+  useMemo,
   useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { Settings2, X, ChevronDown, RotateCcw } from "lucide-react";
-import { configStore } from "./store";
+import {
+  Settings2,
+  X,
+  ChevronDown,
+  RotateCcw,
+  Copy as CopyIcon,
+  Check,
+  AlertTriangle,
+  Wand2,
+  Upload,
+} from "lucide-react";
+import { configStore, type SerializedState } from "./store";
 import { BRAND_PRESETS, COLOR_FIELDS, FONT_OPTIONS } from "./defaults";
-import { COPY_FIELDS } from "@/data/copy";
-import type { ConfigData, ThemeColors } from "./types";
+import { WIRE_PAGES } from "@/canvas/pages";
+import type { ThemeColors } from "./types";
 
 function useTheme() {
   return useSyncExternalStore(
     configStore.subscribe,
     configStore.getThemeSnapshot,
     configStore.getThemeSnapshot
+  );
+}
+
+function useDataSnapshot() {
+  return useSyncExternalStore(
+    configStore.subscribe,
+    configStore.getDataSnapshot,
+    configStore.getDataSnapshot
   );
 }
 
@@ -58,6 +77,198 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
+// ------------------------------------------------------------------
+// JSON content tab: read + write the full store as serialized JSON,
+// optionally scoped to a single frame's slice (still merges back).
+// ------------------------------------------------------------------
+type JsonScope = "all" | string; // "all" or a WIRE_PAGES id
+
+type JsonStatus =
+  | { kind: "idle" }
+  | { kind: "ok"; message: string }
+  | { kind: "error"; message: string };
+
+function stringifySnapshot(snap: SerializedState): string {
+  return JSON.stringify(snap, null, 2);
+}
+
+function JsonContentEditor() {
+  // Subscribe to the data snapshot so external mutations (brand kit clicks,
+  // inline edits in later phases, profile switches) re-seed the textarea —
+  // but only when the user hasn't started editing it.
+  const liveSnapshot = useDataSnapshot();
+
+  const [scope, setScope] = useState<JsonScope>("all");
+  const [text, setText] = useState<string>(() =>
+    stringifySnapshot(configStore.serialize()),
+  );
+  const [dirty, setDirty] = useState(false);
+  const [status, setStatus] = useState<JsonStatus>({ kind: "idle" });
+  const [copied, setCopied] = useState(false);
+
+  // Re-seed text on scope change and on external store mutations.
+  useEffect(() => {
+    if (dirty) return;
+    const snap = scope === "all"
+      ? configStore.serialize()
+      : configStore.serializeFrame(scope);
+    setText(stringifySnapshot(snap));
+  }, [scope, dirty, liveSnapshot]);
+
+  const onChange = (v: string) => {
+    setText(v);
+    setDirty(true);
+    setStatus({ kind: "idle" });
+  };
+
+  const copyText = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      setStatus({
+        kind: "error",
+        message: "Copy failed: " + (err instanceof Error ? err.message : String(err)),
+      });
+    }
+  };
+
+  const format = () => {
+    try {
+      const parsed = JSON.parse(text);
+      setText(JSON.stringify(parsed, null, 2));
+      setStatus({ kind: "ok", message: "Valid JSON" });
+    } catch (err) {
+      setStatus({
+        kind: "error",
+        message: err instanceof Error ? err.message : String(err),
+      });
+    }
+  };
+
+  const apply = () => {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      setStatus({
+        kind: "error",
+        message: "Invalid JSON: " + (err instanceof Error ? err.message : String(err)),
+      });
+      return;
+    }
+    try {
+      // Per-frame paste merges so we don't wipe sibling frames' overrides.
+      if (scope !== "all") {
+        const p = parsed as Partial<SerializedState>;
+        if (p && p.data) {
+          configStore.mergeData(p.data);
+          setStatus({ kind: "ok", message: "Applied frame slice" });
+        } else {
+          throw new Error("Expected an object with a `data` field");
+        }
+      } else {
+        configStore.loadFullState(parsed);
+        setStatus({ kind: "ok", message: "Applied to canvas" });
+      }
+      setDirty(false);
+    } catch (err) {
+      setStatus({
+        kind: "error",
+        message: err instanceof Error ? err.message : String(err),
+      });
+    }
+  };
+
+  const discard = () => {
+    const snap = scope === "all"
+      ? configStore.serialize()
+      : configStore.serializeFrame(scope);
+    setText(stringifySnapshot(snap));
+    setDirty(false);
+    setStatus({ kind: "idle" });
+  };
+
+  const sortedPages = useMemo(
+    () => [...WIRE_PAGES].sort((a, b) => a.title.localeCompare(b.title)),
+    [],
+  );
+
+  return (
+    <div className="cfg-json">
+      <p className="cfg-hint">
+        Copy the current content as JSON or paste new JSON to update the canvas.
+        Duplicating a list item (a menu item, FAQ, review) duplicates it on the
+        wireframe.
+      </p>
+
+      <div className="cfg-json-scope">
+        <label className="cfg-json-scope-label">Scope</label>
+        <select
+          className="cfg-select"
+          value={scope}
+          onChange={(e) => {
+            if (dirty) {
+              const ok = window.confirm(
+                "Discard unsaved JSON edits and switch scope?",
+              );
+              if (!ok) return;
+              setDirty(false);
+            }
+            setScope(e.target.value as JsonScope);
+            setStatus({ kind: "idle" });
+          }}
+        >
+          <option value="all">Whole canvas (all frames)</option>
+          {sortedPages.map((p) => (
+            <option key={p.id} value={p.id}>{p.title}</option>
+          ))}
+        </select>
+      </div>
+
+      <textarea
+        className="cfg-json-textarea"
+        value={text}
+        onChange={(e) => onChange(e.target.value)}
+        spellCheck={false}
+        rows={18}
+      />
+
+      <div className="cfg-json-actions">
+        <button type="button" className="cfg-btn" onClick={copyText} title="Copy JSON to clipboard">
+          {copied ? <Check size={13} /> : <CopyIcon size={13} />}
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <button type="button" className="cfg-btn" onClick={format} title="Re-indent / validate">
+          <Wand2 size={13} /> Format
+        </button>
+        <button
+          type="button"
+          className="cfg-btn cfg-btn-primary"
+          onClick={apply}
+          disabled={!dirty}
+          title="Apply pasted JSON to the canvas"
+        >
+          <Upload size={13} /> Apply
+        </button>
+        {dirty && (
+          <button type="button" className="cfg-btn cfg-btn-ghost" onClick={discard}>
+            Discard
+          </button>
+        )}
+      </div>
+
+      {status.kind === "ok" && (
+        <div className="cfg-json-status ok"><Check size={13} /> {status.message}</div>
+      )}
+      {status.kind === "error" && (
+        <div className="cfg-json-status err"><AlertTriangle size={13} /> {status.message}</div>
+      )}
+    </div>
+  );
+}
+
 function ConfigPanelImpl() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -65,17 +276,8 @@ function ConfigPanelImpl() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     colors: true,
     type: false,
-    brand: false,
-    links: false,
-    pagecopy: false,
-    products: false,
+    json: true,
   });
-  const [openCat, setOpenCat] = useState<number | null>(0);
-  const timers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
-
-  // Uncontrolled data inputs read their initial value from here; the panel is
-  // memoized so committing data never re-renders it (preserving focus + value).
-  const data = configStore.getState().data;
 
   const toggle = (id: string) =>
     setExpanded((e) => ({ ...e, [id]: !e[id] }));
@@ -87,42 +289,13 @@ function ConfigPanelImpl() {
 
   const setFont = (
     which: "fontDisplay" | "fontBody" | "fontAccent",
-    val: string
+    val: string,
   ) =>
     configStore.updateTheme((t) => {
       t[which] = val;
     });
 
-  // Debounced content commit, keyed per field so parallel edits never drop.
-  const commit = (key: string, producer: (d: ConfigData) => void) => {
-    clearTimeout(timers.current[key]);
-    timers.current[key] = setTimeout(
-      () => configStore.updateData(producer),
-      220
-    );
-  };
-
-  const onText =
-    (key: string, assign: (d: ConfigData, v: string) => void) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const v = e.target.value;
-      commit(key, (d) => assign(d, v));
-    };
-
-  const onAddr =
-    (field: "street" | "city" | "state" | "zip") =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const v = e.target.value;
-      commit("addr." + field, (d) => {
-        const a = d.restaurant.address;
-        a[field] = v;
-        a.full = `${a.street}, ${a.city}, ${a.state} ${a.zip}`;
-      });
-    };
-
   const reset = () => {
-    Object.values(timers.current).forEach(clearTimeout);
-    timers.current = {};
     configStore.reset();
     setResetNonce((n) => n + 1);
   };
@@ -148,7 +321,7 @@ function ConfigPanelImpl() {
         <div className="cfg-head">
           <div>
             <h3>Site variables</h3>
-            <p className="cfg-sub">Edit once · applies to every frame</p>
+            <p className="cfg-sub">Brand kit, colors, and JSON content</p>
           </div>
           <div className="cfg-actions">
             <button
@@ -255,210 +428,9 @@ function ConfigPanelImpl() {
             </Field>
           </Section>
 
-          {/* ---------------- BRAND & CONTACT ---------------- */}
-          <Section id="brand" title="Brand & contact" open={expanded.brand} onToggle={toggle}>
-            <Field label="Restaurant name (SEO / schema)">
-              <input className="cfg-input" defaultValue={data.restaurant.name}
-                onChange={onText("name", (d, v) => { d.restaurant.name = v; })} />
-            </Field>
-            <Field label="Legal name (© line)">
-              <input className="cfg-input" defaultValue={data.restaurant.legalName}
-                onChange={onText("legalName", (d, v) => { d.restaurant.legalName = v; })} />
-            </Field>
-            <Field label="Brand (header/footer)">
-              <input className="cfg-input" defaultValue={data.restaurant.brandShort}
-                onChange={onText("brandShort", (d, v) => { d.restaurant.brandShort = v; })} />
-            </Field>
-            <Field label="Tagline">
-              <input className="cfg-input" defaultValue={data.restaurant.tagline}
-                onChange={onText("tagline", (d, v) => { d.restaurant.tagline = v; })} />
-            </Field>
-            <Field label="Short description">
-              <textarea className="cfg-textarea" rows={3} defaultValue={data.restaurant.shortDescription}
-                onChange={onText("shortDescription", (d, v) => { d.restaurant.shortDescription = v; })} />
-            </Field>
-            <div className="cfg-grid2">
-              <Field label="Phone">
-                <input className="cfg-input" defaultValue={data.restaurant.phone}
-                  onChange={onText("phone", (d, v) => { d.restaurant.phone = v; })} />
-              </Field>
-              <Field label="Email">
-                <input className="cfg-input" defaultValue={data.restaurant.email}
-                  onChange={onText("email", (d, v) => { d.restaurant.email = v; })} />
-              </Field>
-            </div>
-            <Field label="Website URL">
-              <input className="cfg-input" defaultValue={data.restaurant.url}
-                onChange={onText("url", (d, v) => { d.restaurant.url = v; })} />
-            </Field>
-            <Field label="Street">
-              <input className="cfg-input" defaultValue={data.restaurant.address.street}
-                onChange={onAddr("street")} />
-            </Field>
-            <div className="cfg-grid2">
-              <Field label="City">
-                <input className="cfg-input" defaultValue={data.restaurant.address.city} onChange={onAddr("city")} />
-              </Field>
-              <Field label="State">
-                <input className="cfg-input" defaultValue={data.restaurant.address.state} onChange={onAddr("state")} />
-              </Field>
-            </div>
-            <div className="cfg-grid2">
-              <Field label="ZIP">
-                <input className="cfg-input" defaultValue={data.restaurant.address.zip} onChange={onAddr("zip")} />
-              </Field>
-              <Field label="Price range">
-                <input className="cfg-input" defaultValue={data.restaurant.priceRange}
-                  onChange={onText("priceRange", (d, v) => { d.restaurant.priceRange = v; })} />
-              </Field>
-            </div>
-            <div className="cfg-grid2">
-              <Field label="Founded">
-                <input className="cfg-input" defaultValue={data.restaurant.founded}
-                  onChange={onText("founded", (d, v) => { d.restaurant.founded = v; })} />
-              </Field>
-              <Field label="Recipes since">
-                <input className="cfg-input" defaultValue={data.restaurant.familyRecipeSince}
-                  onChange={onText("familyRecipeSince", (d, v) => { d.restaurant.familyRecipeSince = v; })} />
-              </Field>
-            </div>
-            <div className="cfg-grid2">
-              <Field label="Rating value">
-                <input className="cfg-input" type="number" step="0.1" min="0" max="5" defaultValue={data.restaurant.ratingValue}
-                  onChange={onText("ratingValue", (d, v) => { d.restaurant.ratingValue = parseFloat(v) || 0; })} />
-              </Field>
-              <Field label="Review count">
-                <input className="cfg-input" type="number" min="0" defaultValue={data.restaurant.reviewCount}
-                  onChange={onText("reviewCount", (d, v) => { d.restaurant.reviewCount = parseInt(v, 10) || 0; })} />
-              </Field>
-            </div>
-            <div className="cfg-grid2">
-              <Field label="Cuisine">
-                <input className="cfg-input" defaultValue={data.restaurant.servesCuisine}
-                  onChange={onText("servesCuisine", (d, v) => { d.restaurant.servesCuisine = v; })} />
-              </Field>
-              <Field label="Dietary">
-                <input className="cfg-input" defaultValue={data.restaurant.dietary}
-                  onChange={onText("dietary", (d, v) => { d.restaurant.dietary = v; })} />
-              </Field>
-            </div>
-            <Field label="State (full name)">
-              <input className="cfg-input" defaultValue={data.restaurant.stateFull}
-                onChange={onText("stateFull", (d, v) => { d.restaurant.stateFull = v; })} />
-            </Field>
-            <div className="cfg-grid2">
-              <Field label="Region / metro">
-                <input className="cfg-input" defaultValue={data.restaurant.region}
-                  onChange={onText("region", (d, v) => { d.restaurant.region = v; })} />
-              </Field>
-              <Field label="Region (short)">
-                <input className="cfg-input" defaultValue={data.restaurant.regionShort}
-                  onChange={onText("regionShort", (d, v) => { d.restaurant.regionShort = v; })} />
-              </Field>
-            </div>
-            <Field label="Heritage / origin city">
-              <input className="cfg-input" defaultValue={data.restaurant.originCity}
-                onChange={onText("originCity", (d, v) => { d.restaurant.originCity = v; })} />
-            </Field>
-          </Section>
-
-          {/* ---------------- LINKS & SOCIAL ---------------- */}
-          <Section id="links" title="Links & social" open={expanded.links} onToggle={toggle}>
-            <Field label="Order online URL">
-              <input className="cfg-input" defaultValue={data.restaurant.orderOnline}
-                onChange={onText("orderOnline", (d, v) => { d.restaurant.orderOnline = v; })} />
-            </Field>
-            <Field label="Instagram URL">
-              <input className="cfg-input" defaultValue={data.restaurant.socials.instagram}
-                onChange={onText("instagram", (d, v) => { d.restaurant.socials.instagram = v; })} />
-            </Field>
-            <Field label="Instagram handle">
-              <input className="cfg-input" defaultValue={data.restaurant.instagramHandle}
-                onChange={onText("instagramHandle", (d, v) => { d.restaurant.instagramHandle = v; })} />
-            </Field>
-            <Field label="Facebook URL">
-              <input className="cfg-input" defaultValue={data.restaurant.socials.facebook}
-                onChange={onText("facebook", (d, v) => { d.restaurant.socials.facebook = v; })} />
-            </Field>
-            <Field label="Google Business URL">
-              <input className="cfg-input" defaultValue={data.restaurant.socials.googleBusinessProfile}
-                onChange={onText("gbp", (d, v) => { d.restaurant.socials.googleBusinessProfile = v; })} />
-            </Field>
-            <Field label="Google Review URL">
-              <input className="cfg-input" defaultValue={data.restaurant.socials.googleReview}
-                onChange={onText("greview", (d, v) => { d.restaurant.socials.googleReview = v; })} />
-            </Field>
-          </Section>
-
-          {/* ---------------- PAGE COPY ---------------- */}
-          <Section id="pagecopy" title="Page copy" open={expanded.pagecopy} onToggle={toggle}>
-            <p className="cfg-hint">
-              Marketing wording for the homepage. Place &amp; cuisine words come from
-              Brand &amp; contact and update across every page automatically.
-            </p>
-            {COPY_FIELDS.map((f) => (
-              <Field key={f.key} label={f.label}>
-                {f.multiline ? (
-                  <textarea
-                    className="cfg-textarea"
-                    rows={2}
-                    defaultValue={data.copy[f.key]}
-                    onChange={onText(`copy.${f.key}`, (d, v) => { d.copy[f.key] = v; })}
-                  />
-                ) : (
-                  <input
-                    className="cfg-input"
-                    defaultValue={data.copy[f.key]}
-                    onChange={onText(`copy.${f.key}`, (d, v) => { d.copy[f.key] = v; })}
-                  />
-                )}
-              </Field>
-            ))}
-          </Section>
-
-          {/* ---------------- PRODUCTS ---------------- */}
-          <Section id="products" title="Products (menu)" open={expanded.products} onToggle={toggle}>
-            <p className="cfg-hint">
-              One source file → every product reference. Edit a name or price and
-              it updates on the menu, featured row, and dish pages.
-            </p>
-            {data.menu.map((cat, ci) => (
-              <div className="cfg-cat" key={ci}>
-                <button
-                  type="button"
-                  className={`cfg-cat-head ${openCat === ci ? "open" : ""}`}
-                  onClick={() => setOpenCat(openCat === ci ? null : ci)}
-                >
-                  <span>{cat.name}</span>
-                  <span className="cfg-cat-count">{cat.items.length}</span>
-                  <ChevronDown size={15} />
-                </button>
-                {openCat === ci && (
-                  <div className="cfg-cat-body">
-                    <Field label="Category name">
-                      <input className="cfg-input" defaultValue={cat.name}
-                        onChange={onText(`cat.${ci}.name`, (d, v) => { d.menu[ci].name = v; })} />
-                    </Field>
-                    <Field label="Category description">
-                      <textarea className="cfg-textarea" rows={2} defaultValue={cat.description}
-                        onChange={onText(`cat.${ci}.desc`, (d, v) => { d.menu[ci].description = v; })} />
-                    </Field>
-                    {cat.items.map((it, ii) => (
-                      <div className="cfg-item" key={ii}>
-                        <div className="cfg-grid2">
-                          <input className="cfg-input" defaultValue={it.name} placeholder="Name"
-                            onChange={onText(`it.${ci}.${ii}.name`, (d, v) => { d.menu[ci].items[ii].name = v; })} />
-                          <input className="cfg-input" defaultValue={it.price} placeholder="Price"
-                            onChange={onText(`it.${ci}.${ii}.price`, (d, v) => { d.menu[ci].items[ii].price = v; })} />
-                        </div>
-                        <textarea className="cfg-textarea" rows={2} defaultValue={it.description} placeholder="Description"
-                          onChange={onText(`it.${ci}.${ii}.desc`, (d, v) => { d.menu[ci].items[ii].description = v; })} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          {/* ---------------- JSON CONTENT ---------------- */}
+          <Section id="json" title="Content (JSON)" open={expanded.json} onToggle={toggle}>
+            <JsonContentEditor />
           </Section>
 
           <div className="cfg-foot">
