@@ -33,7 +33,10 @@ function resolveRelatedItems(names: string[] | undefined): ResolvedRelatedItem[]
 // all SPECIALTIES via generateStaticParams(). "On the menu" items resolve from
 // specialty.relatedMenuItemNames → MENU via resolveRelatedItems().
 function SpecialtyPage() {
-  const specialty = SPECIALTIES.find((s) => s.slug === "baklava")!;
+  // Profiles renamed from the Al-Baghdady defaults won't have a "baklava"
+  // specialty, so fall back to the first entry rather than crashing.
+  const specialty = SPECIALTIES.find((s) => s.slug === "baklava") ?? SPECIALTIES[0];
+  if (!specialty) return null;
 
   const related = resolveRelatedItems(specialty.relatedMenuItemNames);
 
