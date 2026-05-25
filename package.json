@@ -1,6 +1,6 @@
 {
   "name": "tt-clientsite-wireframe",
-  "version": "1.5",
+  "version": "1.6",
   "private": true,
   "scripts": {
     "dev": "next dev",
