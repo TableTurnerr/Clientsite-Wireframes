@@ -15,7 +15,10 @@ import SmartImage from "@/components/shared/SmartImage";
 // Async dynamic route made sync by hardcoding a sample city; one file renders
 // all NEIGHBORHOODS via generateStaticParams() on the real site.
 function NeighborhoodPage() {
-  const n = NEIGHBORHOODS.find((x) => x.slug === "plano-tx")!;
+  // Profiles renamed from the Al-Baghdady defaults won't have a "plano-tx"
+  // neighborhood, so fall back to the first entry rather than crashing.
+  const n = NEIGHBORHOODS.find((x) => x.slug === "plano-tx") ?? NEIGHBORHOODS[0];
+  if (!n) return null;
 
   return (
     <>
