@@ -73,6 +73,23 @@ Brand presets (`BRAND_PRESETS` in `src/config/defaults.ts`) are full palette + f
 3. Add its estimated height to `EST_H` in `src/data/registry.ts` (measure from the dev server; the value only affects first-paint spacing).
 4. Assign it to an existing `group` string or add a new entry to `CLUSTER_META` in `registry.ts`.
 
+## MCP server (`/api/mcp`)
+
+The wireframe ships an MCP server at `src/app/api/mcp/route.ts` so AI agents (Claude Desktop, Claude Code, Cursor, etc.) can read and edit canvases live. Architecture:
+
+- **Transport**: Streamable HTTP via `mcp-handler` (stateless, no Redis, no SSE).
+- **Auth**: Bearer token (`Authorization: Bearer ttwf_...`). Tokens are SHA-256 hashed at rest in `public.wireframe_mcp_keys`; plaintext is returned exactly once by the `mint_wireframe_mcp_key(label)` RPC and shown once in the Connect AI panel.
+- **Data path**: AI writes go through a service-role Supabase client (`src/lib/supabase/service.ts`) that bypasses RLS. Writes upsert `public.wireframe_content.content`, the same JSONB row autosaved by ClientProfileBar. The existing Supabase realtime publication pushes the new content to every open browser tab, so AI edits appear live in the wireframe.
+- **Tools** (in `src/app/api/mcp/tools.ts`): `list_canvases`, `get_canvas`, `list_pages`, `describe_schema`, `update_restaurant`, `update_copy`, `set_menu/faqs/reviews/specialties/neighborhoods/dishes`, `apply_theme`, `apply_brand_preset`, `set_override`, `clear_overrides`, `replace_canvas`. Each operates against the SerializedState shape `configStore` already produces.
+
+Required env (server-only): `SUPABASE_SERVICE_ROLE_KEY`. The handler lazy-constructs the service client so `npm run build` works without it; production must set it.
+
+`next.config.ts` lists `mcp-handler`, `@modelcontextprotocol/sdk`, and `redis` under `serverExternalPackages` — they're CJS with dynamic requires that break Next's bundler otherwise.
+
+**Edit-lock interaction**: MCP writes bypass `wireframe_edit_locks` entirely (the AI is treated as a system actor). Realtime updates will overwrite whatever an editing user has on screen; the assumption is that you've delegated to the AI deliberately, so this is desired behavior.
+
+**Connect AI panel** (`src/components/wireframe/ConnectAIPanel.tsx`): top-right button → modal that lists/mints/revokes keys and offers a **Copy Prompt** button. The copied prompt is model-agnostic and embeds the MCP URL, the bearer token, both CLI and JSON-config snippets, and a tour of the tools so an AI client can connect and start work in one paste.
+
 ## CSS conventions
 
 All design tokens are CSS custom properties defined in `src/app/globals.css` under `@theme` (Tailwind v4) and mirrored on `:root`. The theme system writes to them at runtime via `applyTheme()`. Use `var(--color-primary)` etc. rather than hardcoded values so the live theme picker works correctly.
