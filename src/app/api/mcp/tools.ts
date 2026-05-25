@@ -15,6 +15,7 @@ interface ClientRow {
   name: string;
   slug: string;
   url: string | null;
+  status: "prospect" | "client" | "template";
   updated_at: string;
 }
 
@@ -26,7 +27,7 @@ async function resolveClient(
   const uuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const query = supabase
     .from("clients")
-    .select("id, name, slug, url, updated_at");
+    .select("id, name, slug, url, status, updated_at");
   const { data, error } = uuidLike.test(idOrSlug)
     ? await query.eq("id", idOrSlug).maybeSingle()
     : await query.eq("slug", idOrSlug).maybeSingle();
@@ -104,12 +105,16 @@ export function registerTools(server: McpServer, supabase: SupabaseClient) {
 
   server.tool(
     "list_canvases",
-    "List every wireframe canvas (one per client). Returns id, slug, name, url, updated_at. Use the id or slug to address a canvas in other tools.",
-    {},
-    async () => {
+    "List every wireframe canvas. By default returns only signed clients and templates (the rows visible in the wireframe picker). Pass include_prospects=true to also list prospect rows that haven't been promoted yet. Returns id, slug, name, url, status, updated_at.",
+    { include_prospects: z.boolean().optional() },
+    async ({ include_prospects }) => {
+      const statuses = include_prospects
+        ? ["prospect", "client", "template"]
+        : ["client", "template"];
       const { data, error } = await supabase
         .from("clients")
-        .select("id, name, slug, url, updated_at")
+        .select("id, name, slug, url, status, updated_at")
+        .in("status", statuses)
         .order("name", { ascending: true });
       if (error) throw new Error(error.message);
       return ok({ canvases: data ?? [] });
